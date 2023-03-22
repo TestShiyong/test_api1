@@ -12,8 +12,21 @@ from common.handle_log import log
 from common.handle_red_conf_file import cf
 
 
+
 class GlobalData:
     pass
+
+
+def Clear_global_var():
+    """
+       清除用例要使用到的数据。
+       """
+    value = dict(GlobalData.__dict__.items())
+    for key, value in value.items():
+        if key.startswith("__"):
+            pass
+        else:
+            delattr(GlobalData, key)
 
 
 def extract(extract_data, response):
