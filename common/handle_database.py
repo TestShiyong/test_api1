@@ -12,7 +12,7 @@ import pymysql
 
 class Database:
 
-    def __init__(self, user, password, host, port=3306, database='table_one'):
+    def __init__(self, user, password, host, port, database):
         """
 
         :param user:
@@ -30,16 +30,15 @@ class Database:
         )
         self.cur = self.connect.cursor(pymysql.cursors.DictCursor)
 
-    def get_fetchall(self, sq):
-
+    def get_fetchall(self, sql):
         self.cur.execute(sql)
         return self.cur.fetchall()
 
-    def get_fetchone(self, sq):
+    def get_fetchone(self, sql):
         self.cur.execute(sql)
         return self.cur.fetchone()
 
-    def alter_data(self,sq):
+    def alter_data(self, sql):
         count_line = self.cur.execute(sql)
         print('修改成功 受影响行数：{}'.format(count_line))
         self.connect.commit()
@@ -48,15 +47,32 @@ class Database:
     def close_connect(self):
         self.cur.close()
         self.connect.close()
-if __name__ == '__main__':
 
 
-    db = Database(
-        user='root',
-        password='shi1557225637_',
-        host='rm-uf60nj0t33i3601vx3o.mysql.rds.aliyuncs.com'
+# az_db = Database(
+#     user='azazie',
+#     password='azazie',
+#     host='db-zt.opsfun.com',
+#     port=3306,
+#     database='azazie'
+#
+# )
 
-    )
-    sql='UPDATE  student  SET  Ssex=\'神\' WHERE  Sname=\'赵雷\''
+#
+# bi = Database(
+#     user='az_query',
+#     password='az_query',
+#     host='report-system.cbb0nles4v8i.us-east-1.rds.amazonaws.com',
+#     port=3306,
+#     database='nebulas')
 
-    db.get_fetchall(sql)
+
+# if __name__ == '__main__':
+#
+#
+#     aa = db.get_fetchall('SELECT * FROM `style`')
+#     print(aa)
+#     list1 = []
+#     for i in aa:
+#         list1.append({"style_id": i['style_id'], "value": i['value']})
+#     print(list1)

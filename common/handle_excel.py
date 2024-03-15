@@ -14,13 +14,12 @@ import my_path
 
 class Excel:
 
-    def __init__(self, file_path):
+    def __init__(self, file_path,sheet):
         """
         :param file_path:传入excel文件路径
         """
-        form_data = load_workbook(my_path.data_path + '\\register.xlsx')
-        self.data = form_data['register_form']
-        print(list(self.data))
+        form_data = load_workbook(file_path)
+        self.data = form_data[sheet]
 
     def red_title(self):
         """
@@ -46,10 +45,11 @@ class Excel:
             for item in items:
                 row_list.append(item.value)
             all_list.append(dict(zip(self.red_title(), row_list)))
+
         return all_list
 
 
 if __name__ == '__main__':
-    aa = Excel(my_path.data_path + '\\register.xlsx')
+    aa = Excel(my_path.data_path + '\\register.xlsx','register_form')
     print(aa.red_title())
     print(aa.all_data())
