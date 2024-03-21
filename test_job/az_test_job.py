@@ -20,12 +20,15 @@ def group_goods():
 
     goods_list = []
     for i in range(1, 7):
-        url = f'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page={i}&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=a&galleryVersion=A&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
+        url = f'https://p3.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page={i}&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=a&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
         res = requests.post(url, json=data, headers=header)
         dict1 = res.json()['data']['prodList']
         for i in dict1:
             goods_list.append(i['goodsId'])
+    no_goods = set(goods_list)
     print(len(goods_list), print(goods_list))
+    for i in no_goods:
+        print(goods_list.count(i))
     return goods_list
 
 
@@ -93,5 +96,5 @@ def update_order_info():
                 continue
 
 
-# group_goods()
-update_order_info()
+group_goods()
+# update_order_info()
