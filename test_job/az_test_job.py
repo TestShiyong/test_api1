@@ -3,7 +3,7 @@ from common.handle_database import Database
 import main
 
 
-def group_goods():
+def group_goods(url):
     """
     列表页接口返回数据 判断列表goods是否有重复
     :return:
@@ -20,7 +20,7 @@ def group_goods():
 
     goods_list = []
     for i in range(1, 7):
-        url = f'https://p3.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page={i}&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=a&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
+        url = url
         res = requests.post(url, json=data, headers=header)
         dict1 = res.json()['data']['prodList']
         for i in dict1:
@@ -28,7 +28,7 @@ def group_goods():
     no_goods = set(goods_list)
     print(len(goods_list), print(goods_list))
     for i in no_goods:
-        print(goods_list.count(i))
+        print(i, goods_list.count(i))
     return goods_list
 
 
@@ -67,14 +67,14 @@ def update_order_info():
     :return:
     """
     country_list = {
-                    "us_en": [3859, 1],
-                    "us_es": [3859, 3],
-                    "fr": [4003, 4],
-                    "de": [4017, 2],
-                    "es": [4143, 3],
-                    "it": [4056, 7],
-                    "nl": [4099, 12],
-                    "se": [4202, 5]}
+        "us_en": [3859, 1],
+        "us_es": [3859, 3],
+        "fr": [4003, 4],
+        "de": [4017, 2],
+        "es": [4143, 3],
+        "it": [4056, 7],
+        "nl": [4099, 12],
+        "se": [4202, 5]}
     az_db = Database(
         user='azazie',
         password='azazie',
@@ -96,5 +96,12 @@ def update_order_info():
                 continue
 
 
-group_goods()
+pre_url = 'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=a&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
+group_goods((1, 7), pro_url)
+print(
+    '-----------------------------------------------------------------------------------------------------------------------------------------------------------------')
+
+pro_url = 'https://www.azazie.com/prod/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=a&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
+
+group_goods(pre_url)
 # update_order_info()
