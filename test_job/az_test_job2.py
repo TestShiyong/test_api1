@@ -138,6 +138,6 @@ flower_url = 'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=fl
 flower_datas = {"filters": {}, "view_mode": ["petite"],
                 "originUrl": "/all/flower-girl-dresses?sort_by=popularity&page=1"}
 # group_goods(swatch_url, (1, 5), swatch_datas)
-group_goods(flower_url, (1, 7), flower_datas)
+group_goods(flower_url, (1, 8), flower_datas)
 
 # detail_page_colors(1000291)
