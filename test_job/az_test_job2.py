@@ -22,11 +22,14 @@ def detail_page_colors(goods_id):
               "authorization": "Basic bGViYmF5OnBhc3N3MHJk"
               }
     url = f'https://apix-p6.azazie.com/1.0/product/first-screen?goods_id={goods_id}'
-    data = requests.get(url, headers=header).json()['data']['styleInfo']['color']
+    res = requests.get(url, headers=header)
+    colors = res.json()['data']['styleInfo']['color']
+    goods_name = res.json()['data']['baseInfo']['goodsName']
+    new_goods_name = goods_name.replace("Flower Girl Dress", "").strip()
     try:
-        for k, _ in data.items():
+        for k, _ in colors.items():
             li.append(k)
-        return len(li)
+        return len(li), new_goods_name
     except Exception:
         print(f'数据异常 id:{goods_id}')
 
@@ -42,7 +45,8 @@ def group_goods(url, page_numbers, datas):
               "x-token": "",
               "x-project": "azazie",
               "x-countryCode": "US",
-              "authorization": "Basic bGViYmF5OnBhc3N3MHJk"
+              "authorization": "Basic bGViYmF5OnBhc3N3MHJk",
+              "cache-action": "flush"
               }
 
     goods_list = []
@@ -58,8 +62,9 @@ def group_goods(url, page_numbers, datas):
     for item_id in no_duplicates:
         count_color_number = detail_page_colors(item_id)
         indexes_of_1 = [index for index, value in enumerate(goods_list) if value == item_id]
-        print(f"Item ID: {item_id}, Count_goods: {goods_list.count(item_id)},count_color_number：{count_color_number}",
-              indexes_of_1)
+        print(
+            f"Item ID: {item_id}, Count_goods: {goods_list.count(item_id)},count_color_number：{count_color_number[0]}",
+            indexes_of_1, count_color_number[1])
     return goods_list
 
 
@@ -132,7 +137,7 @@ swatch_datas = {"filters": {}, "view_mode": ["petite"], "originUrl": "/swatches-
 flower_url = 'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=b&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
 flower_datas = {"filters": {}, "view_mode": ["petite"],
                 "originUrl": "/all/flower-girl-dresses?sort_by=popularity&page=1"}
-group_goods(swatch_url, (1, 5), swatch_datas)
-# group_goods(flower_url, (1, 7), flower_datas)
+# group_goods(swatch_url, (1, 5), swatch_datas)
+group_goods(flower_url, (1, 7), flower_datas)
 
 # detail_page_colors(1000291)
