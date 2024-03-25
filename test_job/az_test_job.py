@@ -1,7 +1,7 @@
 import requests
-from common.handle_database import Database
-import main
 
+
+from common.handle_database import Database
 
 
 def group_list(l1):
@@ -12,10 +12,27 @@ def group_list(l1):
     return l2
 
 
-import requests
+def detail_page_colors(goods_id):
+    li = []
+    header = {"Content-Type": "application/json",
+              "Accept": "application/json",
+              "x-app": "pc",
+              "x-token": "",
+              "x-project": "azazie",
+              "x-countryCode": "US",
+              "authorization": "Basic bGViYmF5OnBhc3N3MHJk"
+              }
+    url = f'https://apix-p6.azazie.com/1.0/product/first-screen?goods_id={goods_id}'
+    data = requests.get(url, headers=header).json()['data']['styleInfo']['color']
+    try:
+        for k, _ in data.items():
+            li.append(k)
+        return len(li)
+    except Exception:
+        print(f'数据异常 id:{goods_id}')
 
 
-def group_goods(url, page_numbers):
+def group_goods(url, page_numbers, datas):
     """
     列表页接口返回数据 判断列表goods是否有重复
     :return:
@@ -28,12 +45,11 @@ def group_goods(url, page_numbers):
               "x-countryCode": "US",
               "authorization": "Basic bGViYmF5OnBhc3N3MHJk"
               }
-    data = {"filters": {}, "view_mode": ["petite"], "originUrl": url}
 
     goods_list = []
     for number in range(*page_numbers):
         url_with_page = url.replace("page=1", f"page={number}")
-        res = requests.post(url_with_page, json=data, headers=header)
+        res = requests.post(url_with_page, json=datas, headers=header)
         dict1 = res.json()['data']['prodList']
         for item in dict1:
             goods_list.append(item['goodsId'])
@@ -41,9 +57,9 @@ def group_goods(url, page_numbers):
     print(f"Total number of goods: {len(goods_list)}")
     print(goods_list)
     for item_id in no_duplicates:
-        print(f"Item ID: {item_id}, Count: {goods_list.count(item_id)}")
+        count_color_number = detail_page_colors(item_id)
+        print(f"Item ID: {item_id}, Count_goods: {goods_list.count(item_id)},count_color_number：{count_color_number}")
     return goods_list
-
 
 
 def az_database():
@@ -110,9 +126,11 @@ def update_order_info():
                 continue
 
 
+swatch_url = 'https://p2.azazie.com/pre/1.0/list/content?format=list&cat_name=swatches-fabric&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=b&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
+swatch_datas = {"filters": {}, "view_mode": ["petite"], "originUrl": "/swatches-fabric?sort_by=popularity&page=1"}
+junior_url = 'https://p2.azazie.com/pre/1.0/list/content?format=list&cat_name=all-junior&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=b&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
+junior_datas = {"filters": {}, "view_mode": ["petite"], "originUrl": "/all/all-junior?sort_by=popularity&page=1"}
+group_goods(swatch_url, (1, 5), swatch_datas)
+group_goods(junior_url, (1, 5), junior_datas)
 
-pro_url = 'https://www.azazie.com/prod/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=a&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
-pre_url = 'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=a&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
-group_goods(pro_url, (1, 7))
-group_goods(pre_url, (1, 5))
-
+# detail_page_colors(1000291)
