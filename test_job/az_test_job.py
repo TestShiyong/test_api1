@@ -129,10 +129,10 @@ def update_order_info():
 
 swatch_url = 'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=swatches-fabric&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=b&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
 swatch_datas = {"filters": {}, "view_mode": ["petite"], "originUrl": "/swatches-fabric?sort_by=popularity&page=1"}
-flower_url = 'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=b&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
+flower_url = 'https://p.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=b&galleryVersion=&sodGalleryVersion=A&topic=azazie&listColorVersion=A'
 flower_datas = {"filters": {}, "view_mode": ["petite"],
                 "originUrl": "/all/flower-girl-dresses?sort_by=popularity&page=1"}
-group_goods(swatch_url, (1, 5), swatch_datas)
-# group_goods(flower_url, (1, 7), flower_datas)
+# group_goods(swatch_url, (1, 5), swatch_datas)
+group_goods(flower_url, (1, 3), flower_datas)
 
 # detail_page_colors(1000291)
