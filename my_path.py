@@ -12,8 +12,8 @@ cf_path = os.path.join(base, 'config/config_file.ini')
 
 product_goods_path = os.path.join(base, 'data', 'file')
 
-erp_ft_path = os.path.join(config_path, 'config/azft.azft')
+erp_ft_path = os.path.join(config_path,'azft.azft')
 
 erp_aws_path = os.path.join(config_path, 'erp-test-aws.rsa')
 if __name__ == '__main__':
-    print(erp_aws_path)
+    print(erp_ft_path)

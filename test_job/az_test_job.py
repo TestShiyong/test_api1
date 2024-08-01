@@ -3,7 +3,11 @@ import requests
 from common.handle_database import Database
 
 
-
+url = 'https://api-t-1.azazie.com/1.0/user/login'
+email = 'shiyong@gaoyaya.com'
+pwd = '123456'
+order_sn = ''
+order_detail_url = f'https://api-t-1.azazie.com/1.0/order/detail?order_sn={order_sn}'
 def loginAZ():
     global url, email, pwd
     headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": "",
