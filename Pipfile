@@ -11,6 +11,8 @@ path = "*"
 requests = "*"
 pytest = "*"
 ddt = "*"
+paramiko = "*"
+bs4 = "*"
 
 [dev-packages]
 

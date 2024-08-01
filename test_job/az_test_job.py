@@ -3,6 +3,33 @@ import requests
 from common.handle_database import Database
 
 
+
+def loginAZ():
+    global url, email, pwd
+    headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": "",
+               "x-project": "azazie", "x-countryCode": 'us'}
+    payload = {
+        'email': email, 'password': pwd
+    }
+    try:
+        result = requests.post(url, json=payload, headers=headers)
+        token = result.json()['data']['token']
+        return token
+    except:
+        print('login接口报错')
+
+
+def getOrderId(token):
+    global order_sn, order_detail_url
+    headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": token,
+               "x-project": "azazie", "x-countryCode": 'us'}
+
+    result = requests.get(url=order_detail_url, headers=headers)
+    order_id = result.json()['data']['orderIds'][order_sn]
+    return order_id
+
+
+
 def group_list(l1):
     l2 = []
     for goods in l1:
