@@ -46,7 +46,7 @@ def sendOrderErp(goods_list):
             client.close()
 
 
-def loginErp():
+def erpLogin():
     header = {
         "Cache-Control": "no-cache",
         "Connection": "keep-alive",
@@ -220,10 +220,19 @@ def executeRemoteCommand(ship_job_id_list):
             client.close()
 
 
+def orderStatusToAz():
+    global orders
+    for az_order_sn in orders:
+        url = 'http://azscript.test.com:400/admin/zz_order_action.php'
+        payload = {'taobao_order_sn': az_order_sn, 'single': '1', 'port': '400'}
+        requests.post(url=url, data=payload)
+
+
 if __name__ == '__main__':
-    orders = ['ZZ6038805662', 'ZZ9278633059']
+    orders = ['ZZ4357515545','ZZ1728186980','ZZ9425657110']
     # sendOrderErp(orders)
-    token = loginErp()
+    # token = erpLogin()
     # erpOrderShip(token)
-    job_id = erpGetShipId(token)
-    executeRemoteCommand(job_id)
+    # job_id = erpGetShipId(token)
+    # executeRemoteCommand(job_id)
+    orderStatusToAz()
