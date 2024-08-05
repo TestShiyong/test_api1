@@ -12,7 +12,7 @@ def sendOrderErp(goods_list):
             'hostname': '34.238.212.241',
             'port': 38022,
             'username': 'ec2-user',
-            'key_filename': my_path.erp_ft_path,
+            'key_filename': myPath.erp_ft_path,
             'command': f'sudo -u www-data php /var/www/http/zzcms-test1/htm/index.php syncer/syncOne/order_sn/{i}'
             # 要执行的命令
         }
@@ -68,8 +68,8 @@ def erpLogin():
 
 
 def getErpOrderId(token):
-    global order_sn, orders
-    erp_order_ids = []
+    global orders
+    erp_order_list = []
     for order_sn in orders:
         url = f'http://erp-test.gaoyaya.com:400/admin/american_whs_management/customer_manager/csmo-inspinia.php?type=search&search_text={order_sn}&search_type=taobao_order_sn'
         headers = {
@@ -85,16 +85,19 @@ def getErpOrderId(token):
             if match:
                 order_id = match.group(1)
                 print("Extracted order_id:", order_id)
-                erp_order_ids.append(order_id)
+                erp_order_list.append(order_id)
             else:
                 print("order_id not found in response.text")
         else:
             print('Failed to fetch data. Status code:', response.status_code)
-    print(erp_order_ids)
-    return erp_order_ids
+    print(erp_order_list)
+    return erp_order_list
 
 
 def erpConfirmOrder(erp_order_id_list, token):
+    if not erp_order_id_list:
+        print('erp order_id is none')
+        return
     for order_id in erp_order_id_list:
         confirm_order_url = 'http://erp-test.gaoyaya.com:400/admin/american_whs_management/customer_manager/order_edit_action.php'
         headers = {
@@ -130,14 +133,14 @@ def erpConfirmOrder(erp_order_id_list, token):
 
 def createShippingTask(token):
     global orders
-    for order__sn in orders:
+    for order_sn in orders:
         erp_create_shipping_url = 'http://erp-test.gaoyaya.com:400/admin/dev_tools/test_order_shipping.php'
         headers = {
             'Cookie': f'OKEY={token}'
         }
         payload = {
             'submit': '1',
-            'taobao_order_sns': order__sn,
+            'taobao_order_sns': order_sn,
             'node': 'SHIPPING',
             'dispatch_assign_provider': '837',
             'container_id': '1884055',
@@ -157,6 +160,7 @@ def getShippingTaskId(token):
     global orders
     shipping_id_list = []
     for shipping_order_sn in orders:
+
         get_shipping_task_url = 'http://erp-test.gaoyaya.com:400/admin/dev_tools/test_order_shipping.php'
         headers = {
             'Cookie': f'OKEY={token}'
@@ -171,13 +175,6 @@ def getShippingTaskId(token):
             shipping_id_list.append(numbers)
     print(shipping_id_list)
     return shipping_id_list
-
-
-def erpOrderShip(token):
-    global orders
-    erp_order_ids = getErpOrderId(token)
-    erpConfirmOrder(erp_order_ids, token)
-    createShippingTask(token)
 
 
 def executeErpRemoteCommand(params):
@@ -211,34 +208,50 @@ def executeErpRemoteCommand(params):
         client.close()
 
 
-def erpShipJob(job_id_list):
+def shipOrder(token):
     sum = 0
-    for job_id in job_id_list:
+    shipping_task_id = getShippingTaskId(token)
+    for shipping_id in shipping_task_id:
         sum += 1
         print(f'开始执行job,执行次数：{sum}')
         params = {
             'hostname': '16.162.224.248',
             'port': 38022,
             'username': 'azerp',
-            'key_filename': my_path.erp_aws_path,
-            'command': f'sudo php /var/www/http/erp400/azpublic/index.php /cli/OrderFastDelivery/executeCrontab/{job_id}'
+            'key_filename': myPath.erp_aws_path,
+            'command': f'sudo php /var/www/http/erp400/azpublic/index.php /cli/OrderFastDelivery/executeCrontab/{shipping_id}'
             # 要执行的命令
         }
         executeErpRemoteCommand(params)
 
 
-def orderStatusToAz():
+def syncOrderToAZ():
     global orders
     for az_order_sn in orders:
         url = 'http://azscript.test.com:400/admin/zz_order_action.php'
         payload = {'taobao_order_sn': az_order_sn, 'single': '1', 'port': '400'}
         requests.post(url=url, data=payload)
 
+
+def createSampleBookingItem():
+    params = {
+        'hostname': '16.162.224.248',
+        'port': 38022,
+        'username': 'azerp',
+        'key_filename': myPath.erp_aws_path,
+        'command': 'php /var/www/http/erp405/protected/yiic azReserveOrderInventory createAzReserveRecord'
+        # 要执行的命令
+    }
+    executeErpRemoteCommand(params)
+
+
 if __name__ == '__main__':
-    orders = ['ZZ0975297133']
+    orders = ['ZZ6097671377']
     sendOrderErp(orders)
-    # token = erpLogin()
-    # erpOrderShip(token)
-    # job_id = erpGetShipId(token)
-    # executeRemoteCommand(job_id)
-    # orderStatusToAz()
+    token = erpLogin()
+    # erp_id_list = getErpOrderId(token)
+    # erpConfirmOrder(erp_id_list, token)
+    # createShippingTask(token)
+    # shipOrder(token)
+    # syncOrderToAZ()
+    createSampleBookingItem()
