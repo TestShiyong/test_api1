@@ -10,7 +10,7 @@
 from configparser import ConfigParser
 
 
-import my_path
+import myPath
 
 class ReadConfigFile:
     def __init__(self, file_path):

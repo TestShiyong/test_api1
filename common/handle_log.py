@@ -8,7 +8,7 @@
 s"""
 
 import logging
-import my_path
+import myPath
 
 
 class Log(logging.Logger):

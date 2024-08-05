@@ -9,7 +9,7 @@
 
 from openpyxl import load_workbook
 import path
-import my_path
+import myPath
 
 
 class Excel:

@@ -1,7 +1,7 @@
 import requests
 import paramiko
 import os
-import my_path
+import myPath
 from bs4 import BeautifulSoup
 import re
 
@@ -67,7 +67,7 @@ def erpLogin():
         return token
 
 
-def searchErpOrderId(token):
+def getErpOrderId(token):
     global order_sn, orders
     erp_order_ids = []
     for order_sn in orders:
@@ -128,10 +128,10 @@ def erpConfirmOrder(erp_order_id_list, token):
             print('erp confirm 接口报错')
 
 
-def erpCreateShip(token):
+def createShippingTask(token):
     global orders
     for order__sn in orders:
-        erp_create_ship_url = 'http://erp-test.gaoyaya.com:400/admin/dev_tools/test_order_shipping.php'
+        erp_create_shipping_url = 'http://erp-test.gaoyaya.com:400/admin/dev_tools/test_order_shipping.php'
         headers = {
             'Cookie': f'OKEY={token}'
         }
@@ -145,7 +145,7 @@ def erpCreateShip(token):
 
         }
         try:
-            result = requests.post(url=erp_create_ship_url, data=payload, headers=headers)
+            result = requests.post(url=erp_create_shipping_url, data=payload, headers=headers)
             if result.status_code != 200:
                 print('创建自动发货任务接口报错 响应码不等于200')
 
@@ -153,35 +153,69 @@ def erpCreateShip(token):
             raise error
 
 
-def erpGetShipId(token):
+def getShippingTaskId(token):
     global orders
-    ship_id_list = []
-    for ship_order_sn in orders:
-        get_ship_task_url = 'http://erp-test.gaoyaya.com:400/admin/dev_tools/test_order_shipping.php'
+    shipping_id_list = []
+    for shipping_order_sn in orders:
+        get_shipping_task_url = 'http://erp-test.gaoyaya.com:400/admin/dev_tools/test_order_shipping.php'
         headers = {
             'Cookie': f'OKEY={token}'
         }
-        result = requests.get(url=get_ship_task_url, headers=headers)
+        result = requests.get(url=get_shipping_task_url, headers=headers)
         text = result.text
 
-        index = text.find(ship_order_sn)
+        index = text.find(shipping_order_sn)
         if index != -1:
             extracted_text = text[max(0, index - 100):index]
             numbers = re.findall(r'\b\d{4}\b', extracted_text)[0]
-            ship_id_list.append(numbers)
-    print(ship_id_list)
-    return ship_id_list
+            shipping_id_list.append(numbers)
+    print(shipping_id_list)
+    return shipping_id_list
 
 
 def erpOrderShip(token):
     global orders
-    erp_order_ids = searchErpOrderId(token)
+    erp_order_ids = getErpOrderId(token)
     erpConfirmOrder(erp_order_ids, token)
-    erpCreateShip(token)
+    createShippingTask(token)
 
 
-def executeRemoteCommand(ship_job_id_list):
-    for job_id in ship_job_id_list:
+def executeErpRemoteCommand(params):
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    hostname = params.get('hostname')
+    port = params.get('port', 22)
+    username = params.get('username')
+    key_filename = params.get('key_filename')
+    command = params.get('command')
+
+    try:
+        client.connect(hostname, port, username, key_filename=key_filename)
+        stdin, stdout, stderr = client.exec_command(command)
+        output = stdout.read().decode()
+        error = stderr.read().decode()
+
+        if output:
+            print("Command Output:")
+            print(output)
+        if error:
+            print("Command Error:")
+            print(error)
+
+    except paramiko.AuthenticationException as auth_exception:
+        print("Authentication failed. Please check your credentials.")
+    except paramiko.SSHException as ssh_exception:
+        print(f"SSH connection failed: {ssh_exception}")
+    finally:
+        client.close()
+
+
+def erpShipJob(job_id_list):
+    sum = 0
+    for job_id in job_id_list:
+        sum += 1
+        print(f'开始执行job,执行次数：{sum}')
         params = {
             'hostname': '16.162.224.248',
             'port': 38022,
@@ -190,34 +224,7 @@ def executeRemoteCommand(ship_job_id_list):
             'command': f'sudo php /var/www/http/erp400/azpublic/index.php /cli/OrderFastDelivery/executeCrontab/{job_id}'
             # 要执行的命令
         }
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-        hostname = params.get('hostname')
-        port = params.get('port', 22)
-        username = params.get('username')
-        key_filename = params.get('key_filename')
-        command = params.get('command')
-
-        try:
-            client.connect(hostname, port, username, key_filename=key_filename)
-            stdin, stdout, stderr = client.exec_command(command)
-            output = stdout.read().decode()
-            error = stderr.read().decode()
-
-            if output:
-                print("Command Output:")
-                print(output)
-            if error:
-                print("Command Error:")
-                print(error)
-
-        except paramiko.AuthenticationException as auth_exception:
-            print("Authentication failed. Please check your credentials.")
-        except paramiko.SSHException as ssh_exception:
-            print(f"SSH connection failed: {ssh_exception}")
-        finally:
-            client.close()
+        executeErpRemoteCommand(params)
 
 
 def orderStatusToAz():
@@ -227,12 +234,11 @@ def orderStatusToAz():
         payload = {'taobao_order_sn': az_order_sn, 'single': '1', 'port': '400'}
         requests.post(url=url, data=payload)
 
-
 if __name__ == '__main__':
-    orders = ['ZZ4357515545','ZZ1728186980','ZZ9425657110']
-    # sendOrderErp(orders)
+    orders = ['ZZ0975297133']
+    sendOrderErp(orders)
     # token = erpLogin()
     # erpOrderShip(token)
     # job_id = erpGetShipId(token)
     # executeRemoteCommand(job_id)
-    orderStatusToAz()
+    # orderStatusToAz()
