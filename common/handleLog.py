@@ -27,7 +27,7 @@ class Log(logging.Logger):
         :param level:日志级别
         :param file:文件路径
         """
-        super().__init__(log_name,level)
+        super().__init__(log_name, level)
         # 创建日志格式
         fmt = '%(name)s:%(asctime)s:%(funcName)s:%(filename)s:%(lineno)d:%(levelname)s:%(message)s'
         # 设置日志格式
@@ -40,14 +40,13 @@ class Log(logging.Logger):
         self.addHandler(handle1)
 
         if file:
-            file_handle=logging.FileHandler(file,mode='a', encoding='utf-8')
+            file_handle = logging.FileHandler(file, mode='a', encoding='utf-8')
             file_handle.setFormatter(formats)
             self.addHandler(file_handle)
 
 
-log = Log('Azazie',file=my_path.log_path+'\\my_log.log')
-
+log = Log('Azazie', file=myPath.log_path + '\\my_log.log')
 
 if __name__ == '__main__':
-    new_log=Log('Azazie',file=my_path.log_path+'\\my_log.log')
+    new_log = Log('Azazie', file=myPath.log_path + '\\my_log.log')
     new_log.warning('输出log test111')

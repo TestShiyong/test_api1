@@ -21,7 +21,7 @@ class Excel:
         form_data = load_workbook(file_path)
         self.data = form_data[sheet]
 
-    def red_title(self):
+    def redTitle(self):
         """
         获取excel首行数据
         :return: 返回excel首行数据值 装入列表内
@@ -31,7 +31,7 @@ class Excel:
             list_title.append(i.value)
         return list_title
 
-    def all_data(self):
+    def allData(self):
         """
         便利excel除首行外的所有行
         再便利每一行取值添加进列表，单行添加完成使用zip把 首行数据 +当前行数据拼接成字典 添加进列表
@@ -44,12 +44,12 @@ class Excel:
             row_list = []
             for item in items:
                 row_list.append(item.value)
-            all_list.append(dict(zip(self.red_title(), row_list)))
+            all_list.append(dict(zip(self.redTitle(), row_list)))
 
         return all_list
 
 
 if __name__ == '__main__':
-    aa = Excel(my_path.data_path + '\\register.xlsx','register_form')
-    print(aa.red_title())
-    print(aa.all_data())
+    aa = Excel(myPath.data_path + '\\register.xlsx','register_form')
+    print(aa.redTitle())
+    print(aa.allData())

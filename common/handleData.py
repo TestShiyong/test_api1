@@ -8,16 +8,15 @@
 from jsonpath import jsonpath
 import re
 
-from common.handle_log import log
-from common.handle_red_conf_file import cf
-
+from common.handleLog import log
+from common.handleConfig import cf
 
 
 class GlobalData:
     pass
 
 
-def Clear_global_var():
+def clearGlobalVar():
     """
        清除用例要使用到的数据。
        """
@@ -43,11 +42,11 @@ def extract(extract_data, response):
         res = jsonpath(response, value)[0]
 
         log.info('提取数据成功：{}'.format(res))
-        
+
         setattr(GlobalData, key, res)
 
 
-def replace_all_data(case: dict):
+def replaceAllData(case: dict):
     """
     便利用例中的值 调用数据获取替换方法返回替换后的值 再把替换后的值替换到用例内
 
@@ -62,14 +61,14 @@ def replace_all_data(case: dict):
         # 如果 value是字符串不为空 就调用数据查找替换方法替换数据并返回
         if value is not None and isinstance(value, str):
             # 把替换后的值  替换进用例
-            case[key] = __replace_data(value)
+            case[key] = __replaceData(value)
 
     log.info("替换数据完成，替换后的数据为:{}".format(case))
 
     return case
 
 
-def __replace_data(data: str):
+def __replaceData(data: str):
     """
     提取用例中的关键字 通过关键字去全局变量中 或 配置文件中查找并替换  可以替换多个关键字
     处理步骤
@@ -80,13 +79,13 @@ def __replace_data(data: str):
     :return: 用例替换后的值
     """
     # 用例中的值有多个参数需要替换 用正则表达式提取出来 放进列表
-    result=re.findall("#(.*?)#", data)
+    result = re.findall("#(.*?)#", data)
     if result:
         # 便利关键字列表
         for item in result:
             try:
                 # 配置文件中获取值
-                value = cf.get_str('Account', item)
+                value = cf.getStr('Account', item)
             except:
                 try:
                     # 配置文件查找不到 全局变量中查找 获取值
@@ -94,11 +93,11 @@ def __replace_data(data: str):
                 except:
                     continue
             # 把用例中的关键字 替换成查询到的参数
-            data.replace(item,value)
+            data.replace(item, value)
     return data
 
 
-def replace_data(case: dict, old_data, new_data):
+def replaceData(case: dict, old_data, new_data):
     """
     替换用例中value中的值  一个值中 只能替换一个关键字
 

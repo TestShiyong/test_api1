@@ -1,6 +1,6 @@
 import requests
 
-from common.handle_database import Database
+from common.handleDatabase import Database
 
 
 def remove_duplicates(lst):
@@ -131,7 +131,7 @@ def update_order_info():
     for k, v in country_list.items():
         print(k, v)
         sql = f"UPDATE order_info SET country = {v[0]}, language_id = {v[1]} WHERE order_sn ='ZZ4577727150';"
-        az_db.alter_data(sql)
+        az_db.alterData(sql)
         while True:
             value = input('next ??:')
             if value == 'y':

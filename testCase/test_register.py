@@ -7,11 +7,11 @@ from ddt import ddt,data
 import path
 import json
 import random
-from common.handle_log import new_log
-from common.handle_excel import Excel_data
-from common.handle_data import Global_var,replace_all_data
-from common.handle_database import Database
-from common.handle_request import send_request
+from common.handleLog import new_log
+from common.handleExcel import Excel_data
+from common.handleData import Global_var,replaceAllData
+from common.handleDatabase import Database
+from common.handle_request import sendRequest
 
 new_register_data = Excel_data(path.excel_dir + '\\excel_data.xlsx', 'register')  # 创建ddt对象
 db = Database()
@@ -29,7 +29,7 @@ class Test_register(unittest.TestCase):
         db.close_db()
 
     # #注册成功
-    @data(*new_register_data.all_data())
+    @data(*new_register_data.allData())
     def test_register(self,case):
         self._testMethodDoc = case['case_name']
         new_log.info("*********   执行用例{}：{}   *********".format(case["id"],case["case_name"]))
@@ -37,10 +37,10 @@ class Test_register(unittest.TestCase):
         if case['data'].find("#email#")!=1:
             new_email=''.join(random.sample('abcdefghijklmnopqrstuvwxyz', 8))
             setattr(Global_var,'email',new_email)
-            case=replace_all_data(case)
+            case=replaceAllData(case)
 
         # 步骤 测试数据 - 发起请求
-        res = send_request('post',case['url'],case['data'])
+        res = sendRequest('post', case['url'], case['data'])
 
         # 期望结果，从字符串转换成字典对象
         expect=eval(case['expect'])

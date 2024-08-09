@@ -1,15 +1,12 @@
 import requests
 
-from common.handle_database import Database
+from common.handleDatabase import Database
 
 
-url = 'https://api-t-1.azazie.com/1.0/user/login'
-email = 'shiyong@gaoyaya.com'
-pwd = '123456'
-order_sn = ''
-order_detail_url = f'https://api-t-1.azazie.com/1.0/order/detail?order_sn={order_sn}'
 def loginAZ():
-    global url, email, pwd
+    url = 'https://api-t-1.azazie.com/1.0/user/login'
+    email = 'shiyong@gaoyaya.com'
+    pwd = '123456'
     headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": "",
                "x-project": "azazie", "x-countryCode": 'us'}
     payload = {
@@ -24,14 +21,14 @@ def loginAZ():
 
 
 def getOrderId(token):
-    global order_sn, order_detail_url
+    order_sn = ''
+    order_detail_url = f'https://api-t-1.azazie.com/1.0/order/detail?order_sn={order_sn}'
     headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": token,
                "x-project": "azazie", "x-countryCode": 'us'}
 
     result = requests.get(url=order_detail_url, headers=headers)
     order_id = result.json()['data']['orderIds'][order_sn]
     return order_id
-
 
 
 def group_list(l1):
@@ -116,6 +113,7 @@ def az_database():
     res = requests.post(url, headers=header, json=datas)
     print(res.json()['data'])
 
+
 # "sql": "select * from goods_display_order_brother  where effective_cat_id = 7  order by sales_order_28_days DESC ",
 """
 
@@ -149,7 +147,7 @@ def update_order_info():
     for k, v in country_list.items():
         print(k, v)
         sql = f"UPDATE order_info SET country = {v[0]}, language_id = {v[1]} WHERE order_sn ='ZZ4577727150';"
-        az_db.alter_data(sql)
+        az_db.alterData(sql)
 
         while True:
             value = input('next ??:')

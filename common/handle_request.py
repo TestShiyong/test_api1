@@ -8,10 +8,10 @@ request模块 二次封装
 
 import requests
 
-from common.handle_log import log
+from common.handleLog import log
 
 
-def send_request(method: str, url: str, country=None, data=None, token=None, output=True):
+def sendRequest(method: str, url: str, country=None, data=None, token=None, output=True):
     """
     所有接口调用都要此方法 经过以下处理
         token 为默认参数 判断是否传 token 如果传token 就通过字典 把token值加入请求头添加字段值
@@ -40,7 +40,7 @@ def send_request(method: str, url: str, country=None, data=None, token=None, out
             data.replace('null', 'None')
             return eval(data)
     # 获取header
-    header = get_header(token, country)
+    header = getHeader(token, country)
 
     # 调用请求 输出log
     log.info("请求头为：{}".format(header))
@@ -78,7 +78,7 @@ def send_request(method: str, url: str, country=None, data=None, token=None, out
         return res
 
 
-def get_header(token=None, country=None):
+def getHeader(token=None, country=None):
     header = {"Content-Type": "application/json",
               "Accept": "application/json",
               "x-app": "pc",

@@ -30,21 +30,21 @@ class Database:
         )
         self.cur = self.connect.cursor(pymysql.cursors.DictCursor)
 
-    def get_fetchall(self, sql):
+    def getFetchall(self, sql):
         self.cur.execute(sql)
         return self.cur.fetchall()
 
-    def get_fetchone(self, sql):
+    def getFetchone(self, sql):
         self.cur.execute(sql)
         return self.cur.fetchone()
 
-    def alter_data(self, sql):
+    def alterData(self, sql):
         count_line = self.cur.execute(sql)
         print('修改成功 受影响行数：{}'.format(count_line))
         self.connect.commit()
         return count_line
 
-    def close_connect(self):
+    def closeConnect(self):
         self.cur.close()
         self.connect.close()
 
@@ -70,7 +70,7 @@ class Database:
 # if __name__ == '__main__':
 #
 #
-#     aa = db.get_fetchall('SELECT * FROM `style`')
+#     aa = db.getFetchall('SELECT * FROM `style`')
 #     print(aa)
 #     list1 = []
 #     for i in aa:

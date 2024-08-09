@@ -71,13 +71,15 @@ def getErpOrderId(token):
     global orders
     erp_order_list = []
     for order_sn in orders:
-        url = f'http://erp-test.gaoyaya.com:400/admin/american_whs_management/customer_manager/csmo-inspinia.php?type=search&search_text={order_sn}&search_type=taobao_order_sn'
+        url = f'http://erp-test.gaoyaya.com:400/admin/american_whs_management/customer_manager/csmo-inspinia.php?' \
+              f'type=search&search_text={order_sn}&search_type=taobao_order_sn&order_type_showroom=-1' \
+              f'&show_orders%5B%5D=customer_orders&show_orders%5B%5D=test_orders&order_status=-1'
         headers = {
-            'Cookie': f'OKEY={token}'
+            'Cookie': f'OKEY={token}',
+
         }
 
         response = requests.get(url, headers=headers)
-
         if response.status_code == 200:
             response_text = response.text
             pattern = r'order_id=(\d+)'
@@ -87,7 +89,7 @@ def getErpOrderId(token):
                 print("Extracted order_id:", order_id)
                 erp_order_list.append(order_id)
             else:
-                print("order_id not found in response.text")
+                print(f"order_id not found in response.text,order_sn:{order_sn}")
         else:
             print('Failed to fetch data. Status code:', response.status_code)
     print(erp_order_list)
@@ -246,12 +248,13 @@ def createSampleBookingItem():
 
 
 if __name__ == '__main__':
-    orders = ['ZZ6097671377']
+    # orders = ['ZZ8294208986', 'ZZ8372880586', 'ZZ3734400244', 'ZZ0260202769']
+    orders = ['ZZ0670459770']
+
     sendOrderErp(orders)
     token = erpLogin()
-    # erp_id_list = getErpOrderId(token)
-    # erpConfirmOrder(erp_id_list, token)
-    # createShippingTask(token)
-    # shipOrder(token)
-    # syncOrderToAZ()
-    createSampleBookingItem()
+    erp_id_list = getErpOrderId(token)
+    erpConfirmOrder(erp_id_list, token)
+    createShippingTask(token)
+    shipOrder(token)
+    syncOrderToAZ()

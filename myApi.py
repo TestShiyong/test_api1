@@ -2,30 +2,27 @@
 #:@FILE  myApi.py
 #:@EMAIL  1557225637@QQ.COM
 
-from flask import Flask,request
+from flask import Flask, request
 import json
 import time
-from common.handle_database import Database
+from common.handleDatabase import Database
 
 # db=Database()
 
 
+sever = Flask(__name__)
 
 
-
-
-sever=Flask(__name__)
-@sever.route('/money',methods=['POST'])
-def indexa():
-
-    password =(request.form.get('password'))
+@sever.route('/money', methods=['POST'])
+def MyApi():
+    password = (request.form.get('password'))
     phone = (request.form.get('phone'))
-    money=(request.values.get('money'))
+    money = (request.values.get('money'))
 
-    if phone and password and money :
+    if phone and password and money:
         try:
-            phone=int(phone)
-        except ValueError  :
+            phone = int(phone)
+        except ValueError:
             msg = {"code": 401, "msg": " phone type not int"}
             return json.dumps(msg)
 
@@ -39,7 +36,7 @@ def indexa():
             return json.dumps(msg)
 
         try:
-            money=float(money)
+            money = float(money)
         except ValueError:
             msg = {"code": 404, "msg": " money type not int or float"}
             return json.dumps(msg)
@@ -50,7 +47,6 @@ def indexa():
         if len(d) > 2:
             msg = {"code": 405, "msg": "You can't have more than two decimal places"}
             return json.dumps(msg)
-
 
         # sq='SELECT * FROM users WHERE PHONE="{}" AND PASSWORD ="{}"'.format(str(phone),str(password))
         # res=db.get_fetchone(sq)
@@ -71,12 +67,8 @@ def indexa():
         #     res={"code":406,"msg":"The account or password is incorrect"}
         #     return res
     else:
-        res={"code":407,"msg":"Wrong argument"}
+        res = {"code": 407, "msg": "Wrong argument"}
         return res
 
 
-sever.run(port=8899,debug=True)
-
-
-
-
+sever.run(port=8899, debug=True)
