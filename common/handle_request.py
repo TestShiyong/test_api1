@@ -11,7 +11,7 @@ import requests
 from common.handleLog import log
 
 
-def sendRequest(method: str, url: str, country=None, data=None, token=None, output=True):
+def sendRequest(method: str, url: str, country=None, data=None, headers=None, token=None, output=True):
     """
     所有接口调用都要此方法 经过以下处理
         token 为默认参数 判断是否传 token 如果传token 就通过字典 把token值加入请求头添加字段值
@@ -40,7 +40,8 @@ def sendRequest(method: str, url: str, country=None, data=None, token=None, outp
             data.replace('null', 'None')
             return eval(data)
     # 获取header
-    header = getHeader(token, country)
+    if not headers:
+        header = getHeader(token, country)
 
     # 调用请求 输出log
     log.info("请求头为：{}".format(header))

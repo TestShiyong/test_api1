@@ -2,10 +2,10 @@ import time
 from threading import Thread
 from common.handle_request import sendRequest
 from common.handleConfig import cf
-from common.handle_log import log
+from common.handleLog import log
 from common.handle_csv import waite_data_cav
 import random
-import mypath
+import myPath
 import os
 
 
@@ -32,7 +32,7 @@ class GoodsFilter:
                           f'&dress_type={self.dress_type}' \
                           f'&page={self.page}&' \
                           f'in_stock=yes&current_in_stock=yes&'
-        goods_pro_list = send_request('post', url, headers=self.headers, out_put=False).json()['data']['prodList']
+        goods_pro_list = sendRequest('post', url, headers=self.headers, output=False).json()['data']['prodList']
 
         goods_list = [{'goods_id': item['goodsId'], 'cat_id': item['catId'], 'goods_name': item['goodsName']}
                       for item in goods_pro_list]
@@ -40,7 +40,7 @@ class GoodsFilter:
 
     def __no_batch_goods_filter_stock(self, goods_id):
         url = self.even + '/stock/{}'.format(goods_id)
-        res = send_request('get', url, headers=self.headers, out_put=False)
+        res = sendRequest('get', url, headers=self.headers, output=False)
         if res.json()['data']['hasStock']:
             list_map = [{'map': key, "value": value} for key, value in res.json()['data']['stockNumberMap'].items()]
 
@@ -56,7 +56,7 @@ class GoodsFilter:
         color_size = self.__no_batch_goods_filter_stock(goods_id)
         if color_size:
             url = self.even + '/product/first-screen?goods_id={}'.format(goods_id)
-            res = send_request('get', url, headers=self.headers, out_put=False)
+            res = sendRequest('get', url, headers=self.headers, output=False)
             try:
                 color_style_id = res.json()['data']['styleInfo']['color'][color_size['color']]['styleId']
             except:
@@ -95,7 +95,7 @@ class GoodsFilter:
         :return:
         """
         url = self.even + f'1.0/product/first-screen?goods_id={goods_id}'
-        res = send_request('get', url, headers=self.headers, out_put=False)
+        res = sendRequest('get', url, headers=self.headers, output=False)
         color = random.choice([key for key in res.json()['data']['styleInfo']['color']])
         color_id = res.json()['data']['styleInfo']['color'][color]['styleId']
 
@@ -129,12 +129,12 @@ class GoodsFilter:
 
     def waite_bath(self):
         goods_info = self.get_batch_data()
-        waite_data_cav(os.path.join(mypath.prime_data_dir, 'wedding-dresses.csv'), goods_info)
-
+        waite_data_cav(os.path.join(myPath.prime_data_dir, 'wedding-dresses.csv'), goods_info)
 
     def waite_no_bath(self):
         goods_info = self.get_no_batch_data()
-        waite_data_cav(os.path.join(mypath.prime_data_dir, self.dress_type), goods_info)
+        waite_data_cav(os.path.join(myPath.prime_data_dir, self.dress_type), goods_info)
+
 
 if __name__ == '__main__':
     batch_goods = GoodsFilter(even=cf.get_str('Url', 'TEST_URL'),
