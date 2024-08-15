@@ -233,6 +233,7 @@ def syncOrderToAZ():
         url = 'http://azscript.test.com:400/admin/zz_order_action.php'
         payload = {'taobao_order_sn': az_order_sn, 'single': '1', 'port': '400'}
         requests.post(url=url, data=payload)
+        print(f'{az_order_sn}已同步到网站')
 
 
 def createSampleBookingItem():
@@ -247,14 +248,36 @@ def createSampleBookingItem():
     executeErpRemoteCommand(params)
 
 
-if __name__ == '__main__':
-    # orders = ['ZZ8294208986', 'ZZ8372880586', 'ZZ3734400244', 'ZZ0260202769']
-    orders = ['ZZ0670459770']
+def deliveryOrder(token):
+    status_list = ['attempt_deliver', 'shipping_signed']
+    global orders
+    for order_sn in orders:
+        for status in status_list:
+            url = 'http://erp-test.gaoyaya.com:400/admin/american_whs_management/tools/mock_tracking.php'
+            data = {
+                'category': status,
+                'taobao_order_sn': order_sn,
+                'act': 'add'
+            }
+            headers = {
+                'Cookie': f'OKEY={token}'
+            }
+            requests.post(url=url, data=data, headers=headers)
+            print(f'{order_sn}更新状态 （{status}）')
 
+
+#
+# def
+
+
+if __name__ == '__main__':
+    orders = ['ZZ5475943286', 'ZZ5067522149', 'ZZ7206679164', 'ZZ3574800574']
+    # orders = ['ZZ3683964548', 'ZZ5923934423']
     sendOrderErp(orders)
     token = erpLogin()
     erp_id_list = getErpOrderId(token)
     erpConfirmOrder(erp_id_list, token)
     createShippingTask(token)
     shipOrder(token)
+    deliveryOrder(token)
     syncOrderToAZ()

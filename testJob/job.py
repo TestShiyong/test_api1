@@ -3,7 +3,7 @@ import requests
 from common.handleDatabase import Database
 
 
-def remove_duplicates(lst):
+def removeDuplicates(lst):
     """
     从列表中移除重复项。
 
@@ -16,7 +16,7 @@ def remove_duplicates(lst):
     return list(set(lst))
 
 
-def get_unique_goods_colors(goods_id):
+def getProductColors(goods_id):
     """
     获取商品的颜色信息。
 
@@ -75,10 +75,10 @@ def get_goods_list(url, page_range, data):
         dict1 = res.json()['data']['prodList']
         for item in dict1:
             goods_list.append(item['goodsId'])
-    unique_goods_list = remove_duplicates(goods_list)
+    unique_goods_list = removeDuplicates(goods_list)
     print(f"Total number of goods: {len(unique_goods_list)}")
     for item_id in unique_goods_list:
-        count_color_number = get_unique_goods_colors(item_id)
+        count_color_number = getProductColors(item_id)
         print(
             f"Item ID: {item_id}, Count_goods: {goods_list.count(item_id)}, Count_color_number: {count_color_number[0]} - {count_color_number[1]}")
     return unique_goods_list
