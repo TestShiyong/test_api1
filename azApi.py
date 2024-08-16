@@ -31,6 +31,25 @@ def register():
     return response.json()['data']['token']
 
 
+def login(email, password):
+    url = 'https://api-t-7.azazie.com/1.0/user/login'
+    data = {
+        'email': email,
+        'password': password
+    }
+    headers = {
+        'x-app': 'pc',
+        'x-countrycode': 'US',
+        'x-languagecode': 'en',
+        'x-original-uri': '',
+        'x-project': 'azazie'
+    }
+
+    result = requests.post(url=url, json=data, headers=headers)
+    login_token = result.json()['data']['token']
+    return login_token
+
+
 def addAddress(token):
     url = 'https://ft1.azazie.com/test/1.0/address/add'
 
@@ -68,5 +87,35 @@ def addAddress(token):
     print(response.text)
 
 
-token = register()
-addAddress(token)
+def addToCart(token, goods_id=1008051, goods_number=1, dress_type='dress', styles=None):
+    url = 'https://ft1.azazie.com/test/1.0/cart/goods'
+
+    headers = {
+        'x-app': 'pc',
+        'x-countrycode': 'US',
+        'x-languagecode': 'en',
+        'x-original-uri': '',
+        'x-project': 'azazie',
+        'x-token': token
+    }
+    data = {
+        "act": "addGoodsToCart",
+        "from_showroom": "",
+        "from_details_entry": "",
+        "from_instagram": "",
+        "from_whatAreU": "",
+        "recommend_flag": "",
+        "goods_id": 1008051,
+        "dress_type": "dress",
+        "goods_number": 1,
+        "styles": {
+            "freeStyle": False,
+            "size_type": "_inch",
+            "select": {"color": 5714, "size": 7525},
+            "customNameList": {"line1": ""}
+        }
+    }
+
+    response = requests.post(url, headers=headers, json=data)
+
+    print(response.text)
