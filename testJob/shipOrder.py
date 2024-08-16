@@ -96,7 +96,7 @@ def getErpOrderId(token):
     return erp_order_list
 
 
-def erpConfirmOrder(erp_order_id_list, token):
+def erpConfirmOrder(erp_order_id_list, token, payment_currency='USD'):
     if not erp_order_id_list:
         print('erp order_id is none')
         return
@@ -116,7 +116,7 @@ def erpConfirmOrder(erp_order_id_list, token):
             'return_apply_hr': '请选择',
             'order_action_vip_tag': 'Normal',
             'prevent_until': '0',
-            'payment_currency': 'USD',
+            'payment_currency': payment_currency,
             'order_id': order_id,
             'order_status': '1',
             'shipping_status': '0',
@@ -213,6 +213,7 @@ def executeErpRemoteCommand(params):
 def shipOrder(token):
     sum = 0
     shipping_task_id = getShippingTaskId(token)
+
     for shipping_id in shipping_task_id:
         sum += 1
         print(f'开始执行job,执行次数：{sum}')
@@ -271,13 +272,13 @@ def deliveryOrder(token):
 
 
 if __name__ == '__main__':
-    orders = ['ZZ5475943286', 'ZZ5067522149', 'ZZ7206679164', 'ZZ3574800574']
-    # orders = ['ZZ3683964548', 'ZZ5923934423']
+    # orders = ['ZZ0102859664', 'ZZ4784184608', 'ZZ4784184608', 'ZZ8885896922','ZZ1874964897']
+    orders = ['ZZ5161686321','ZZ0885930548']
     sendOrderErp(orders)
-    token = erpLogin()
-    erp_id_list = getErpOrderId(token)
-    erpConfirmOrder(erp_id_list, token)
-    createShippingTask(token)
-    shipOrder(token)
-    deliveryOrder(token)
-    syncOrderToAZ()
+    # token = erpLogin()
+    # erp_id_list = getErpOrderId(token)
+    # erpConfirmOrder(erp_id_list, token)
+    # createShippingTask(token)
+    # shipOrder(token)
+    # # deliveryOrder(token)
+    # syncOrderToAZ()
