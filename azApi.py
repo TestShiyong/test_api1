@@ -1,17 +1,14 @@
 import requests
 import time
 
-# BASE_URL = 'https://ft1.azazie.com/test'
-COM = 'test_shiyong0821143418@gaoyaya.com'
+BASE_URL = 'https://ft1.azazie.com/test'
 
-BASE_URL = 'https://apix.azazie.com'
+# BASE_URL = 'https://apix.azazie.com'
 test_order_data_list = []
 
 
-def register():
-    # 获取当前时间戳
+def register(email=None):
     timestamp = int(time.time())
-    # 将时间戳转换为指定格式的日期（不包含年份）
     date = time.strftime('%m%d%H%M%S', time.localtime(timestamp))
     url = f'{BASE_URL}/1.0/user/register'
     headers = {
@@ -21,8 +18,11 @@ def register():
         'x-original-uri': '',
         'x-project': 'azazie'
     }
+
+    if not email:
+        email = f'test_shiyong{date}@gaoyaya.com'
     data = {
-        'email': f'test_shiyong{date}@gaoyaya.com',
+        'email': email,
         'name': f'test_shiyong{date}',
         'password': '123456',
         'is_check_email_suffix': '1',
@@ -208,11 +208,11 @@ def payment(order_sn, token):
 
 
 if __name__ == '__main__':
-
-    # token = register()
-    token = login('test_shiyong0821174118@gaoyaya.com', '123456')
+    token = register('test_shiyong0827@gaoyaya.com')
+    # token = login('test_shiyong0821174118@gaoyaya.com', '123456')
     print(token)
-    # address_id = getAddress(token)
+    address_id = getAddress(token)
     # addToCart(token, goods_number=1)
     # order_sn = createOrder(token, address_id)
     # payment(order_sn, token)
+    pass

@@ -12,6 +12,11 @@ base_url = base_url
 
 
 def color_size(goods_id):
+    """
+    调用首屏接口 获取color size id
+    :param goods_id:
+    :return: color_id, size_id
+    """
     url = base_url + f'1.0/product/first-screen?goods_id={goods_id}'
     res = send_request('get', url, out_put=False)
     color = random.choice([key for key in res.json()['data']['styleInfo']['color']])
