@@ -92,7 +92,7 @@ def getErpOrderId(token):
                 print(f"order_id not found in response.text,order_sn:{order_sn}")
         else:
             print('Failed to fetch data. Status code:', response.status_code)
-    print(erp_order_list)
+    print('confirmErpOrderList:', erp_order_list)
     return erp_order_list
 
 
@@ -160,7 +160,7 @@ def createShippingTask(token):
 
 def getShippingTaskId(token):
     global orders
-    shipping_id_list = []
+    shipping_taskid_list = []
     for shipping_order_sn in orders:
 
         get_shipping_task_url = 'http://erp-test.gaoyaya.com:400/admin/dev_tools/test_order_shipping.php'
@@ -174,9 +174,9 @@ def getShippingTaskId(token):
         if index != -1:
             extracted_text = text[max(0, index - 100):index]
             numbers = re.findall(r'\b\d{4}\b', extracted_text)[0]
-            shipping_id_list.append(numbers)
-    print(shipping_id_list)
-    return shipping_id_list
+            shipping_taskid_list.append(numbers)
+    print('shippingTaskidList:', shipping_taskid_list)
+    return shipping_taskid_list
 
 
 def executeErpRemoteCommand(params):
@@ -272,13 +272,13 @@ def deliveryOrder(token):
 
 
 if __name__ == '__main__':
-    # orders = ['ZZ0102859664', 'ZZ4784184608', 'ZZ4784184608', 'ZZ8885896922','ZZ1874964897']
-    orders = ['ZZ5161686321','ZZ0885930548']
+    # orders = []
+    orders = ['ZZ3073874828', 'ZZ7580171652', 'ZZ0698767511']
     sendOrderErp(orders)
-    # token = erpLogin()
-    # erp_id_list = getErpOrderId(token)
-    # erpConfirmOrder(erp_id_list, token)
-    # createShippingTask(token)
-    # shipOrder(token)
-    # # deliveryOrder(token)
-    # syncOrderToAZ()
+    token = erpLogin()
+    erp_id_list = getErpOrderId(token)
+    erpConfirmOrder(erp_id_list, token)
+    createShippingTask(token)
+    shipOrder(token)
+    # deliveryOrder(token)
+    syncOrderToAZ()

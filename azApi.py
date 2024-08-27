@@ -1,15 +1,19 @@
 import requests
 import time
 
+# BASE_URL = 'https://ft1.azazie.com/test'
+COM = 'test_shiyong0821143418@gaoyaya.com'
+
+BASE_URL = 'https://apix.azazie.com'
+test_order_data_list = []
+
 
 def register():
     # 获取当前时间戳
     timestamp = int(time.time())
-
     # 将时间戳转换为指定格式的日期（不包含年份）
-    date = time.strftime('%m%d%H%M', time.localtime(timestamp))
-
-    url = 'https://ft1.azazie.com/test/1.0/user/register'
+    date = time.strftime('%m%d%H%M%S', time.localtime(timestamp))
+    url = f'{BASE_URL}/1.0/user/register'
     headers = {
         'x-app': 'pc',
         'x-countrycode': 'US',
@@ -17,7 +21,6 @@ def register():
         'x-original-uri': '',
         'x-project': 'azazie'
     }
-
     data = {
         'email': f'test_shiyong{date}@gaoyaya.com',
         'name': f'test_shiyong{date}',
@@ -25,14 +28,16 @@ def register():
         'is_check_email_suffix': '1',
         'categories[0]': 'page_common_new_user_category_bd'
     }
-
     response = requests.post(url, headers=headers, data=data)
-    print(response.json()['data']['email'])
+    email = response.json()['data']['email']
+    print('register()', email)
+    global test_order_data_list
+    test_order_data_list.append(email)
     return response.json()['data']['token']
 
 
 def login(email, password):
-    url = 'https://api-t-7.azazie.com/1.0/user/login'
+    url = f'{BASE_URL}/1.0/user/login'
     data = {
         'email': email,
         'password': password
@@ -47,11 +52,12 @@ def login(email, password):
 
     result = requests.post(url=url, json=data, headers=headers)
     login_token = result.json()['data']['token']
+    print(result.json())
     return login_token
 
 
-def addAddress(token):
-    url = 'https://ft1.azazie.com/test/1.0/address/add'
+def createAddress(token):
+    url = f'{BASE_URL}/1.0/address/add'
 
     headers = {
         'x-app': 'pc',
@@ -61,7 +67,6 @@ def addAddress(token):
         'x-project': 'azazie',
         'x-token': token
     }
-
     data = {
         "address_type": 1,
         "country": 3859,
@@ -81,15 +86,33 @@ def addAddress(token):
         "order_country_code": "US",
         "sort_by": ""
     }
-
     response = requests.post(url, headers=headers, json=data)
+    print('createAddress()', response.json())
+    address_list = response.json()['data']['addressList']['shippingAddress']
+    return address_list[0]['addressId']
 
-    print(response.text)
+
+def getAddress(token):
+    url = f'{BASE_URL}/1.0/address/get'
+    headers = {
+        'x-app': 'pc',
+        'x-countrycode': 'us',
+        'x-languagecode': 'en',
+        'x-token': token,
+    }
+
+    response = requests.get(url, headers=headers)
+    address_list = response.json()['data']['shippingAddress']
+    if not address_list:
+        addressId = createAddress(token)
+        return addressId
+    addressId = address_list[0]['addressId']
+    print('getAddress():', addressId)
+    return addressId
 
 
 def addToCart(token, goods_id=1008051, goods_number=1, dress_type='dress', styles=None):
-    url = 'https://ft1.azazie.com/test/1.0/cart/goods'
-
+    url = f'{BASE_URL}/1.0/cart/goods'
     headers = {
         'x-app': 'pc',
         'x-countrycode': 'US',
@@ -105,9 +128,9 @@ def addToCart(token, goods_id=1008051, goods_number=1, dress_type='dress', style
         "from_instagram": "",
         "from_whatAreU": "",
         "recommend_flag": "",
-        "goods_id": 1008051,
-        "dress_type": "dress",
-        "goods_number": 1,
+        "goods_id": goods_id,
+        "dress_type": dress_type,
+        "goods_number": goods_number,
         "styles": {
             "freeStyle": False,
             "size_type": "_inch",
@@ -118,4 +141,78 @@ def addToCart(token, goods_id=1008051, goods_number=1, dress_type='dress', style
 
     response = requests.post(url, headers=headers, json=data)
 
-    print(response.text)
+    print('addToCart()', response.json())
+
+
+def createOrder(token, address_id):
+    global test_order_data_list
+    url = f'{BASE_URL}/1.0/order'
+    headers = {
+        'content-type': 'application/json;charset=UTF-8',
+        'x-app': 'pc',
+        'x-countrycode': 'US',
+        'x-languagecode': 'en',
+        'x-project': 'azazie',
+        'x-token': token
+    }
+    data = {
+        "order_sn": "",
+        "payment_id": 186,
+        "shipping_method_id": "2",
+        "address_id": address_id,
+        "coupon_code": "forever111",
+        "use_account_balance": False,
+        "order_track_id": "",
+        "event_date": "",
+        "order_type": "normal",
+        "card_number": "4000000000001000",
+        "exp_date": "03/2027",
+        "month": "03",
+        "year": "2027",
+        "card_code": "022",
+        "version": "a"
+    }
+    response = requests.post(url, headers=headers, json=data)
+    print('createOrder()', response.json())
+    order_sn = response.json()['data']['orderSn']
+    test_order_data_list.append(order_sn)
+
+    return order_sn
+
+
+def payment(order_sn, token):
+    import requests
+
+    headers = {
+        'x-app': 'pc',
+        'x-countrycode': 'US',
+        'x-languagecode': 'en',
+        'x-original-uri': '',
+        'x-project': 'azazie',
+        'x-refer-request-trace-id': '',
+        'x-request-trace-user-uid': '',
+        'x-token': token
+    }
+
+    data = {
+        "nonce": "",
+        "order_sn": order_sn,
+        "REF": "10111010",
+        "device_id": 115408886,
+        "use_account_balance": False
+    }
+
+    response = requests.post('https://ft1.azazie.com/test/1.0/order/payment', headers=headers, json=data)
+
+    print('payment', response.json())
+
+
+if __name__ == '__main__':
+
+    # token = register()
+    token = login('test_shiyong0821174118@gaoyaya.com', '123456')
+    print(token)
+    # address_id = getAddress(token)
+    # addToCart(token, goods_number=1)
+    # order_sn = createOrder(token, address_id)
+    # payment(order_sn, token)
