@@ -267,18 +267,17 @@ def deliveryOrder(token):
             print(f'{order_sn}更新状态 （{status}）')
 
 
-#
-# def
+
 
 
 if __name__ == '__main__':
     # orders = []
-    orders = ['ZZ3073874828', 'ZZ7580171652', 'ZZ0698767511']
+    orders = ['ZZ4403952246']
     sendOrderErp(orders)
-    token = erpLogin()
-    erp_id_list = getErpOrderId(token)
-    erpConfirmOrder(erp_id_list, token)
-    createShippingTask(token)
-    shipOrder(token)
+    # token = erpLogin()
+    # erp_id_list = getErpOrderId(token)
+    # erpConfirmOrder(erp_id_list, token)
+    # createShippingTask(token)
+    # shipOrder(token)
     # deliveryOrder(token)
-    syncOrderToAZ()
+    # syncOrderToAZ()

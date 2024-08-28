@@ -16,14 +16,15 @@ def register(email=None):
         'x-countrycode': 'US',
         'x-languagecode': 'en',
         'x-original-uri': '',
-        'x-project': 'azazie'
+        'x-project': 'azazie',
+
     }
 
     if not email:
         email = f'test_shiyong{date}@gaoyaya.com'
     data = {
         'email': email,
-        'name': f'test_shiyong{date}',
+        'name': email[:-12],
         'password': '123456',
         'is_check_email_suffix': '1',
         'categories[0]': 'page_common_new_user_category_bd'
@@ -208,8 +209,8 @@ def payment(order_sn, token):
 
 
 if __name__ == '__main__':
-    token = register('test_shiyong0827@gaoyaya.com')
-    # token = login('test_shiyong0821174118@gaoyaya.com', '123456')
+    token = register()
+    # token = login('test_shiyong0828v@gaoyaya.com', '123456')
     print(token)
     address_id = getAddress(token)
     # addToCart(token, goods_number=1)
