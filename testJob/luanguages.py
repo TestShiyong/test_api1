@@ -1,6 +1,6 @@
 import openpyxl
 from googletrans import Translator
-
+import myPath
 # 打开 Excel 文件
 wb = openpyxl.load_workbook('../primeData/template.xlsx')
 sheet = wb.active
@@ -32,4 +32,4 @@ for idx, row in enumerate(sheet.iter_rows(min_row=2, min_col=2, max_col=2, value
 
 
 # 保存修改后的文件
-wb.save('translated_file.xlsx')
+wb.save(myPath.languageCoedFile)
