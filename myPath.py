@@ -16,10 +16,9 @@ erp_ft_path = os.path.join(config_path, 'azft.azft')
 
 erp_aws_path = os.path.join(config_path, 'erp-test-aws.rsa')
 
-language_excel_file = os.path.join(base, 'primeData', 'template.xlsx')
 
-languageCoedFile = os.path.join(base, 'primeData')
+translatedLanguageFile = os.path.join(base, 'primeData','translatedLanguage.xlsx')
 # csv 文件路径
-prime_data_dir = os.path.join(base, 'primeData', 'languageCoed.xlsx')
+primeDataDir = os.path.join(base, 'primeData')
 if __name__ == '__main__':
-    print(prime_data_dir)
+    print(primeDataDir)
