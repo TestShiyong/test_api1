@@ -140,7 +140,8 @@ def update_order_info():
                 continue
 
 
-flower_url = 'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=b&galleryVersion=A&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
-flower_datas = {"filters": {}, "view_mode": ["petite"],
-                "originUrl": "/all/flower-girl-dresses?sort_by=popularity&page=1"}
-get_goods_list(flower_url, (1, 6), flower_datas)
+if __name__ == '__main__':
+    flower_url = 'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=b&galleryVersion=A&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
+    flower_datas = {"filters": {}, "view_mode": ["petite"],
+                    "originUrl": "/all/flower-girl-dresses?sort_by=popularity&page=1"}
+    get_goods_list(flower_url, (1, 6), flower_datas)
