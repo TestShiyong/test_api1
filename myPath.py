@@ -8,7 +8,7 @@ config_path = os.path.join(base, 'config')
 
 log_path = os.path.join(base, 'outPut', 'log_file')
 
-cf_path = os.path.join(base, 'config/config_file.ini')
+configFilePath = os.path.join(base, 'config/config_file.ini')
 
 product_goods_path = os.path.join(base, 'data', 'file')
 

@@ -12,29 +12,32 @@ from configparser import ConfigParser
 import myPath
 
 
-class ReadConfigFile:
-    def __init__(self, file_path):
-        """
+class ConfigReader:
 
-        :param file_path:
-        """
-        self.new_config_parser = ConfigParser()
-        self.new_config_parser.read(file_path)
+    @staticmethod
+    def getStr(item, key):
+        config_parser = ConfigParser()
+        config_parser.read(myPath.configFilePath)
+        return config_parser.get(item, key)
 
-    def getStr(self, item, key):
-        return self.new_config_parser.get(item, key)
+    @staticmethod
+    def getInt(item, key):
+        config_parser = ConfigParser()
+        config_parser.read(myPath.configFilePath)
+        return config_parser.getint(item, key)
 
-    def getInt(self, item, key):
-        return self.new_config_parser.getint(item, key)
+    @staticmethod
+    def getFlout(item, key):
+        config_parser = ConfigParser()
+        config_parser.read(myPath.configFilePath)
+        return config_parser.getfloat(item, key)
 
-    def getFlout(self, item, key):
-        return self.new_config_parser.getfloat(item, key)
+    @staticmethod
+    def getBoolean(item, key):
+        config_parser = ConfigParser()
+        config_parser.read(myPath.configFilePath)
+        return config_parser.getboolean(item, key)
 
-    def getBoolean(self, item, key):
-        return self.new_config_parser.getboolean(item, key)
 
-
-cf = ReadConfigFile(myPath.cf_path)
 if __name__ == '__main__':
-    print(cf.getStr('Host', 'host'))
-    cf = ReadConfigFile(myPath.cf_path)
+    ConfigReader.getStr(myPath.cf_path)

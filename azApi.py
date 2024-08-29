@@ -1,9 +1,9 @@
 import requests
 import time
 
-BASE_URL = 'https://ft1.azazie.com/test'
+# BASE_URL = 'https://ft1.azazie.com/test'
 
-# BASE_URL = 'https://apix.azazie.com'
+BASE_URL = 'https://apix.azazie.com'
 test_order_data_list = []
 
 

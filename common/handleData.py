@@ -9,7 +9,6 @@ from jsonpath import jsonpath
 import re
 
 from common.handleLog import log
-from common.handleConfig import cf
 
 
 class GlobalData:
