@@ -67,7 +67,7 @@ def erpLogin():
         return token
 
 
-def getErpOrderId(token):
+def getErpOrderItems(token):
     global orders
     erp_order_list = []
     for order_sn in orders:
@@ -87,7 +87,8 @@ def getErpOrderId(token):
             if match:
                 order_id = match.group(1)
                 print("Extracted order_id:", order_id)
-                erp_order_list.append(order_id)
+
+                erp_order_list.append({'order_sn': order_sn, 'order_id': order_id})
             else:
                 print(f"order_id not found in response.text,order_sn:{order_sn}")
         else:
@@ -96,11 +97,36 @@ def getErpOrderId(token):
     return erp_order_list
 
 
-def erpConfirmOrder(erp_order_id_list, token, payment_currency='USD'):
-    if not erp_order_id_list:
+def getPaymentCurrency(token, erp_order_list):
+    global orders
+    shipping_taskid_list = []
+    for order_sn in erp_order_list:
+        url = f'http://erp-test.gaoyaya.com:400/admin/american_whs_management/customer_manager/csmo-inspinia.php?' \
+              f'type=search&search_text={order_sn}&search_type=taobao_order_sn&order_type_showroom=-1' \
+              f'&show_orders%5B%5D=customer_orders&show_orders%5B%5D=test_orders&order_status=-1'
+        headers = {
+            'Cookie': f'OKEY={token}',
+
+        }
+
+        result = requests.get(url, headers=headers)
+        result_text = result.text
+        custom_text = 'Amount Payable'
+        index = result_text.find(custom_text)
+        if index != -1:
+            extracted_text = result_text[max(0, index - 100):index]
+            numbers = re.findall(r'\b[A-Z]{3}\b', extracted_text)[0]
+            shipping_taskid_list.append(numbers)
+    print('shippingTaskidList:', shipping_taskid_list)
+    return shipping_taskid_list
+
+
+def erpConfirmOrder(erp_order_item_list, token, payment_currency='USD'):
+    if not erp_order_item_list:
         print('erp order_id is none')
         return
-    for order_id in erp_order_id_list:
+    for order_items in erp_order_item_list:
+        order_id = order_items['order_id']
         confirm_order_url = 'http://erp-test.gaoyaya.com:400/admin/american_whs_management/customer_manager/order_edit_action.php'
         headers = {
             'Cookie': f'OKEY={token}',
@@ -267,17 +293,14 @@ def deliveryOrder(token):
             print(f'{order_sn}更新状态 （{status}）')
 
 
-
-
-
 if __name__ == '__main__':
     # orders = []
-    orders = ['ZZ1297279626','ZZ1882166056']
-    sendOrderErp(orders)
-    token = erpLogin()
-    erp_id_list = getErpOrderId(token)
-    erpConfirmOrder(erp_id_list, token)
-    createShippingTask(token)
-    shipOrder(token)
-    # deliveryOrder(token)
+    orders = ['ZZ2299837103']
+    # sendOrderErp(orders)
+    # token = erpLogin()
+    # erp_items_list = getErpOrderItems(token)
+    # erpConfirmOrder(erp_items_list, token)
+    # createShippingTask(token)
+    # shipOrder(token)
+    # # deliveryOrder(token)
     syncOrderToAZ()

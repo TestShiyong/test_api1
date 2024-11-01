@@ -1,16 +1,18 @@
 import requests
-
 from common.handleDatabase import Database
 
+from datetime import datetime, timezone, timedelta
+import time
 
-def loginAZ():
+
+def loginAZ(is_pro=None):
     url = 'https://api-t-1.azazie.com/1.0/user/login'
-    email = 'shiyong@gaoyaya.com'
-    pwd = '123456'
+    if is_pro:
+        url = 'https://apix.azazie.com/1.0/user/login'
     headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": "",
                "x-project": "azazie", "x-countryCode": 'us'}
     payload = {
-        'email': email, 'password': pwd
+        'email': 'shiyong@gaoyaya.com', 'password': 123456
     }
     try:
         result = requests.post(url, json=payload, headers=headers)
@@ -18,6 +20,31 @@ def loginAZ():
         return token
     except:
         print('login接口报错')
+
+
+def getRecId(token):
+    headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": token,
+               "x-project": "azazie", "x-countryCode": 'us'}
+    url = 'https://apix.azazie.com/1.0/cart'
+    res = requests.get(url, headers=headers)
+    checkout_goods_list = res.json()['data']['checkoutGoodsList']
+    rec_id_list = []
+    if checkout_goods_list:
+        for item in checkout_goods_list:
+            rec_id_list.append(item['recId'])
+    print(rec_id_list)
+    return rec_id_list
+
+
+def deleteCard(rec_id_list, token, is_pro=None):
+    headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": token,
+               "x-project": "azazie", "x-countryCode": 'us'}
+    for rec_id in rec_id_list:
+        url = f'https://api-t-7.azazie.com/1.0/cart/goods/{rec_id}'
+        if is_pro:
+            url = f'https://apix.azazie.com/1.0/cart/goods/{rec_id}'
+        res = requests.delete(url, headers=headers)
+        print('deleteCard:', res.status_code)
 
 
 def getOrderId(token):
@@ -151,13 +178,61 @@ def update_order_info():
                 continue
 
 
-if __name__ == '__main__':
-    swatch_url = 'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=swatches-fabric&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=b&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
-    swatch_datas = {"filters": {}, "view_mode": ["petite"], "originUrl": "/swatches-fabric?sort_by=popularity&page=1"}
-    flower_url = 'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=b&galleryVersion=B&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
-    flower_datas = {"filters": {}, "view_mode": ["petite"],
-                    "originUrl": "/all/flower-girl-dresses?sort_by=popularity&page=1"}
-    group_goods(swatch_url, (1, 5), swatch_datas)
-    # group_goods(flower_url, (1, 7), flower_datas)
+def updateCouponEndTime(email, coupon_code, end_time):
+    az_db = Database(
+        user='azazie',
+        password='azazie',
+        host='az-test-db.gaoyaya.com',
+        port=3306,
+        database='azazie'
 
-    # detail_page_colors(1000291)
+    )
+    sql_select_coupon_id = f"select id from coupon_user_map where email = '{email}' and coupon_code = '{coupon_code}'"
+    id = az_db.getFetchall(sql_select_coupon_id)[0]['id']
+    sql_update_etime = f"update  coupon_user_map set coupon_end_time = '{end_time}' where id = '{id}'"
+    az_db.updateDate(sql_update_etime)
+    sql_select_coupon_end_time = f"select coupon_end_time  from coupon_user_map where id = '{id}'"
+    coupon_end_time = az_db.getFetchall(sql_select_coupon_end_time)[0]['coupon_end_time']
+    print('coupon_code:', coupon_code, 'id:', id)
+    return coupon_end_time
+
+
+def remaining_time_until_given_timestamp(timestamp, coupon_code):
+    # 获取当前洛杉矶时间
+    la_timezone = timezone(timedelta(hours=-7))  # 洛杉矶夏令时时区 UTC-7
+    current_time_utc = datetime.now(timezone.utc)  # 当前UTC时间
+    current_time_la = current_time_utc.astimezone(la_timezone)
+
+    # 将时间戳转换为 datetime 对象（带有时区信息）
+    given_time = datetime.utcfromtimestamp(timestamp).replace(tzinfo=timezone.utc)
+
+    # 计算剩余时间
+    remaining_time = given_time - current_time_utc
+
+    remaining_days = remaining_time.days
+    remaining_hours, remainder_seconds = divmod(remaining_time.seconds, 3600)
+
+    print(f"coupon code: {coupon_code} 失效时间剩余 {remaining_days} 天 {remaining_hours} 小时")
+
+    return remaining_days, remaining_hours
+
+
+def format_email():
+    timestamp = int(time.time())
+    date = time.strftime('%m%d%H%M%S', time.localtime(timestamp))
+    email = f'test_shiyong{date}@gaoyaya.com'
+    print(email)
+    return email
+
+
+if __name__ == '__main__':
+    # 调用函数并传入时间戳和优惠券代码
+    # given_timestamp = 1725415199  # 替换为你的时间戳
+    # coupon_code = "YOUR_COUPON_CODE"  # 替换为你的优惠券代码
+    # remaining_time_until_given_timestamp(given_timestamp, coupon_code)
+
+    # format_email()
+
+    token = loginAZ(is_pro=True)
+    rec_id_list = getRecId(token)
+    deleteCard(rec_id_list, token, True)

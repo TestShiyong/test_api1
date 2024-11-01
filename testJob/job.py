@@ -84,7 +84,7 @@ def get_goods_list(url, page_range, data):
     return unique_goods_list
 
 
-def get_goods_data_from_az_database():
+def azOnlineDatabase(sql, token):
     """
     从AZ数据库获取数据处理。
     """
@@ -95,17 +95,18 @@ def get_goods_data_from_az_database():
         "Host": "audit-az.gaoyaya.com",
         "Origin": "https://audit-az.gaoyaya.com",
         "Referer": "https://audit-az.gaoyaya.com/",
-        "authorization": "Basic bGViYmF5OnBhc3N3MHJk"
+        "authorization": authorization
     }
     datas = {
-        "sql": "select * from goods_display_order_brother where effective_cat_id = 7 order by sales_order_28_days DESC ",
+        # "sql": "select * from goods_display_order_brother where effective_cat_id = 7 order by sales_order_28_days DESC ",
+        "sql": sql,
         "basename": "azazie",
         "source": "azdbslave"
     }
     url = 'https://audit-az.gaoyaya.com/api/v2/query'
     res = requests.post(url, headers=header, json=datas)
     # 处理返回的数据...
-
+    return res.json()
 
 def update_order_info():
     """
@@ -141,7 +142,12 @@ def update_order_info():
 
 
 if __name__ == '__main__':
-    flower_url = 'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=b&galleryVersion=A&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
-    flower_datas = {"filters": {}, "view_mode": ["petite"],
-                    "originUrl": "/all/flower-girl-dresses?sort_by=popularity&page=1"}
-    get_goods_list(flower_url, (1, 6), flower_datas)
+    # flower_url = 'https://p6.azazie.com/pre/1.0/list/content?format=list&cat_name=flower-girl-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=b&galleryVersion=A&sodGalleryVersion=B&topic=azazie&listColorVersion=A'
+    # flower_datas = {"filters": {}, "view_mode": ["petite"],
+    #                 "originUrl": "/all/flower-girl-dresses?sort_by=popularity&page=1"}
+    # get_goods_list(flower_url, (1, 6), flower_datas)
+    sql = "SELECT * FROM kumo_recommend_goods WHERE source_goods_id = 1060123 AND source_goods_color_name = 'jade' ORDER BY `rank` DESC"
+    authorization='Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzAyODYzMDYsIm5hbWUiOiJzaGl5b25nIiwicm9sZSI' \
+                  '6Imd1ZXN0In0.6zDG9LVxxOcLWLzaKJyGavpqY6qqxgr-jYQioQ6XwGQ'
+    res = azOnlineDatabase(sql,authorization)
+    print(res)

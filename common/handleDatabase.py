@@ -38,7 +38,7 @@ class Database:
         self.cur.execute(sql)
         return self.cur.fetchone()
 
-    def alterData(self, sql):
+    def updateDate(self, sql):
         count_line = self.cur.execute(sql)
         print('修改成功 受影响行数：{}'.format(count_line))
         self.connect.commit()
@@ -49,14 +49,15 @@ class Database:
         self.connect.close()
 
 
-# az_db = Database(
-#     user='azazie',
-#     password='azazie',
-#     host='db-zt.opsfun.com',
-#     port=3306,
-#     database='azazie'
-#
-# )
+if __name__ == '__main__':
+    az_db = Database(
+        user='azazie',
+        password='azazie',
+        host='az-test-db.gaoyaya.com',
+        port=3306,
+        database='azazie'
+
+    )
 
 #
 # bi = Database(

@@ -1,9 +1,9 @@
 import requests
 import time
 
-# BASE_URL = 'https://ft1.azazie.com/test'
+BASE_URL = 'https://ft1.azazie.com/test'
 
-BASE_URL = 'https://apix.azazie.com'
+# BASE_URL = 'https://apix.azazie.com'
 test_order_data_list = []
 
 
@@ -209,8 +209,8 @@ def payment(order_sn, token):
 
 
 if __name__ == '__main__':
-    token = register()
-    # token = login('test_shiyong0828v@gaoyaya.com', '123456')
+    # token = register()
+    token = login('Lhhu9@gaoyay.com', 'lb123456')
     print(token)
     address_id = getAddress(token)
     # addToCart(token, goods_number=1)
