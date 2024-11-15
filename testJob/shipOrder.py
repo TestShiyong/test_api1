@@ -97,6 +97,34 @@ def getErpOrderItems(token):
     return erp_order_list
 
 
+def getErpOrderItems2(token):
+    global orders
+    erp_order_list = []
+    for order_sn in orders:
+        url = 'http://erp-test.gaoyaya.com:400/admin/american_whs_management/customer_manager/order_edit.php?order_id=86686628'
+        headers = {
+            'Cookie': f'OKEY={token}',
+
+        }
+
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            key = "az_sn"
+            text = response.text
+            print(text)
+            index = text.find(key)
+            print(type(text))
+
+            if index != -1:
+                extracted_text = text[max(0, index + 100):index]
+                print(extracted_text)
+                # numbers = re.findall(r'SF\d+', extracted_text)[0]
+                # print(numbers)
+                # return numbers
+
+    return erp_order_list
+
+
 def getPaymentCurrency(token, erp_order_list):
     global orders
     shipping_taskid_list = []
@@ -136,7 +164,7 @@ def erpConfirmOrder(erp_order_item_list, token, payment_currency='USD'):
         payload = {
             'track_reason': '1',
             'track_phone': 'Y',
-            'actionNote': 'asddfaf',
+            'actionNote': '订单已确认，请正常发货',
             'order_action_type_show': '1',
             'sync_type': '1',
             'return_apply_hr': '请选择',
@@ -239,7 +267,6 @@ def executeErpRemoteCommand(params):
 def shipOrder(token):
     sum = 0
     shipping_task_id = getShippingTaskId(token)
-
     for shipping_id in shipping_task_id:
         sum += 1
         print(f'开始执行job,执行次数：{sum}')
@@ -257,6 +284,7 @@ def shipOrder(token):
 def syncOrderToAZ():
     global orders
     for az_order_sn in orders:
+        print(f'开始同步订单信息到网站 order_sn:{az_order_sn}')
         url = 'http://azscript.test.com:400/admin/zz_order_action.php'
         payload = {'taobao_order_sn': az_order_sn, 'single': '1', 'port': '400'}
         requests.post(url=url, data=payload)
@@ -295,12 +323,13 @@ def deliveryOrder(token):
 
 if __name__ == '__main__':
     # orders = []
-    orders = ['ZZ2299837103']
-    # sendOrderErp(orders)
-    # token = erpLogin()
+    orders = ['ZZ3019342312']
+    sendOrderErp(orders)
+    token = erpLogin()
     # erp_items_list = getErpOrderItems(token)
     # erpConfirmOrder(erp_items_list, token)
     # createShippingTask(token)
     # shipOrder(token)
     # # deliveryOrder(token)
-    syncOrderToAZ()
+    # syncOrderToAZ()
+    getErpOrderItems2(token)

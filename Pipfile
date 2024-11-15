@@ -13,6 +13,7 @@ pytest = "*"
 ddt = "*"
 paramiko = "*"
 bs4 = "*"
+google = "*"
 
 [dev-packages]
 

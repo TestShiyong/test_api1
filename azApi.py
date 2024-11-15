@@ -1,7 +1,7 @@
 import requests
 import time
 
-BASE_URL = 'https://ft1.azazie.com/test'
+BASE_URL = 'https://api-t-2.azazie.com'
 
 # BASE_URL = 'https://apix.azazie.com'
 test_order_data_list = []
@@ -52,6 +52,7 @@ def login(email, password):
     }
 
     result = requests.post(url=url, json=data, headers=headers)
+    res = result.json()
     login_token = result.json()['data']['token']
     print(result.json())
     return login_token
@@ -167,12 +168,14 @@ def createOrder(token, address_id):
         "event_date": "",
         "order_type": "normal",
         "card_number": "4000000000001000",
-        "exp_date": "03/2027",
-        "month": "03",
+        "exp_date": "01/2027",
+        "month": "01",
         "year": "2027",
-        "card_code": "022",
-        "version": "a"
+        "card_code": "116",
+        "version": "a",
+        "robot_validation":1
     }
+    print(f'createOrder data: {data}')
     response = requests.post(url, headers=headers, json=data)
     print('createOrder()', response.json())
     order_sn = response.json()['data']['orderSn']
@@ -203,17 +206,17 @@ def payment(order_sn, token):
         "use_account_balance": False
     }
 
-    response = requests.post('https://ft1.azazie.com/test/1.0/order/payment', headers=headers, json=data)
+    response = requests.post(f'{BASE_URL}/1.0/order/payment', headers=headers, json=data)
 
     print('payment', response.json())
 
 
 if __name__ == '__main__':
     # token = register()
-    token = login('Lhhu9@gaoyay.com', 'lb123456')
+    token = login('shiyong@gaoyaya.com', '123456')
     print(token)
     address_id = getAddress(token)
     # addToCart(token, goods_number=1)
-    # order_sn = createOrder(token, address_id)
-    # payment(order_sn, token)
+    order_sn = createOrder(token, address_id)
+    payment(order_sn, token)
     pass
