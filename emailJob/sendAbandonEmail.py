@@ -9,32 +9,7 @@ def sendListEmail(list_data):
     pass
 
 
-goods_list = [
-    {
-        "goods_id": "1052846",
-        "cat_id": "7"
-    },
-    {
-        "goods_id": "1052845",
-        "cat_id": "7"
-    },
-    {
-        "goods_id": "1052833",
-        "cat_id": "7"
-    },
-    {
-        "goods_id": "1052838",
-        "cat_id": "7"
-    },
-    {
-        "goods_id": "1056567",
-        "cat_id": "7"
-    },
-    {
-        "goods_id": "1060066",
-        "cat_id": "7"
-    }
-]
+
 
 
 def sendDetailEmail(detail_data, interval):
@@ -58,9 +33,9 @@ def sendDetailEmail(detail_data, interval):
 
     }
     number = 0
-    for goods in detail_data:
-        datas[f'data[jsonParams][template_data][goods_info][{number}][goods_id]'] = goods['goods_id']
-        datas[f'data[jsonParams][template_data][goods_info][{number}][cat_id]'] = goods['cat_id']
+    for goods_item in detail_data:
+        datas[f'data[jsonParams][template_data][goods_info][{number}][goods_id]'] = goods_item['goods_id']
+        datas[f'data[jsonParams][template_data][goods_info][{number}][cat_id]'] = goods_item['cat_id']
         number += 1
     params = {
         'q': 'admin/main/mailMock/proxy',
@@ -69,5 +44,8 @@ def sendDetailEmail(detail_data, interval):
     res = requests.post(url, datas, params=params)
     print('detail邮件发送成功', res.json())
 
-
-sendDetailEmail(goods_list, '1h')
+category_list = [{
+    "goods_id": "1052845",
+    "cat_id": "7"
+}]
+sendDetailEmail(category_list, '1h')
