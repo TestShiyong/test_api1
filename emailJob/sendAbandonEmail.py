@@ -4,6 +4,7 @@ from abandonDate import list_data
 from common.handleDatabase import az_db
 
 email = 'lapuda@gaoyaya.com'
+# email = 'shiyong@gaoyaya.com'
 
 
 def sendHomeEmail(home_data):
@@ -82,12 +83,12 @@ def sendDetailEmail(detail_data, interval):
         'method': 'POST',
         'url': 'https://cms-cron-api-t.gaoyaya.com/mail-mock/run-shell?q=1&Authorization=Bearer FbVKVHJYbZ5QZMeKd9CoRx8Z7eywGx84',
         'data[env]': 'cron',
-        'data[email]': 'lapuda@gaoyaya.com',
+        'data[email]': email,
         'data[scriptId]': '11',
         'data[country]': 'us',
         'data[language]': 'en',
         'data[jsonParams][mail_data][subject]': '占位符，不生效',
-        'data[jsonParams][template_data][email]': 'lapuda@gaoyaya.com',
+        'data[jsonParams][template_data][email]': email,
         'data[jsonParams][template_data][from_page]': 'detail',
         'data[jsonParams][template_data][interval]': interval,
         'data[jsonParams][template_data][cat_id][0]': 2,
@@ -118,7 +119,8 @@ def sendAllCategoryDetailEmail(detail_data, interval):
     for category in detail_data:
         sendDetailEmail([category], interval)
 
-
-# sendAllCategoryDetailEmail(detail_category_list, '1h')
-# sendListEmail(list_data)'
-sendHomeEmail(11)
+if __name__ == '__main__':
+    pass
+    # sendAllCategoryDetailEmail(detail_category_list, '1h')
+    # sendListEmail(list_data)
+    # sendHomeEmail('test')
