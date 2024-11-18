@@ -1,10 +1,40 @@
 import requests
 from abandonDate import detail_category_list
 from abandonDate import list_data
+from common.handleDatabase import az_db
+
+email = 'lapuda@gaoyaya.com'
 
 
 def sendHomeEmail(home_data):
-    pass
+    category = ['Bridesmaid Dresses', 'Wedding Dresses', 'Mother Of The Bride Dresses', 'Flower Girl Dresses',
+                'Formal & Evening', 'Accessories', 'Bridesmaid Dresses,Wedding Dresses,Mother Of The Bride Dresses',
+                'Flower Girl Dresses,Formal & Evening,Accessories']
+    for item in category:
+        sql = f"UPDATE email_extension_by_type set ext_value = '{item}' WHERE email = '{email}' "
+        az_db.updateDate(sql)
+        print(f'开始发送 home 邮件:', list_data)
+        url = 'https://cms-t-4.azazie.com/index.php'
+        datas = {
+            'method': 'POST',
+            'url': 'https://cms-cron-api-t.gaoyaya.com/mail-mock/run-shell?q=1&Authorization=Bearer FbVKVHJYbZ5QZMeKd9CoRx8Z7eywGx84',
+            'data[env]': 'cron',
+            'data[email]': email,
+            'data[scriptId]': '14',
+            'data[country]': 'us',
+            'data[language]': 'en',
+            'data[jsonParams][mail_data][subject]': '占位符，不生效',
+            'data[jsonParams][template_data][email]': email,
+            'data[jsonParams][template_data][from_page]': 'home',
+            'data[jsonParams][template_data][isMock]': True
+
+        }
+        params = {
+            'q': 'admin/main/mailMock/proxy',
+            'Authorization': 'Bearer FbVKVHJYbZ5QZMeKd9CoRx8Z7eywGx84'
+        }
+        res = requests.post(url, datas, params=params)
+        print(res.json())
 
 
 def sendListEmail(list_data):
@@ -14,12 +44,12 @@ def sendListEmail(list_data):
         'method': 'POST',
         'url': 'https://cms-cron-api-t.gaoyaya.com/mail-mock/run-shell?q=1&Authorization=Bearer FbVKVHJYbZ5QZMeKd9CoRx8Z7eywGx84',
         'data[env]': 'cron',
-        'data[email]': 'shiyong@gaoyaya.com',
+        'data[email]': email,
         'data[scriptId]': '10',
         'data[country]': 'us',
         'data[language]': 'en',
         'data[jsonParams][mail_data][subject]': '占位符，不生效',
-        'data[jsonParams][template_data][email]': 'shiyong@gaoyaya.com',
+        'data[jsonParams][template_data][email]': email,
         'data[jsonParams][template_data][from_page]': 'goods',
         # 'data[jsonParams][template_data][cat_id][0]': 2,
         # 'data[jsonParams][template_data][cat_id][1]': 7,
@@ -52,12 +82,12 @@ def sendDetailEmail(detail_data, interval):
         'method': 'POST',
         'url': 'https://cms-cron-api-t.gaoyaya.com/mail-mock/run-shell?q=1&Authorization=Bearer FbVKVHJYbZ5QZMeKd9CoRx8Z7eywGx84',
         'data[env]': 'cron',
-        'data[email]': 'shiyong@gaoyaya.com',
+        'data[email]': 'lapuda@gaoyaya.com',
         'data[scriptId]': '11',
         'data[country]': 'us',
         'data[language]': 'en',
         'data[jsonParams][mail_data][subject]': '占位符，不生效',
-        'data[jsonParams][template_data][email]': 'shiyong@gaoyaya.com',
+        'data[jsonParams][template_data][email]': 'lapuda@gaoyaya.com',
         'data[jsonParams][template_data][from_page]': 'detail',
         'data[jsonParams][template_data][interval]': interval,
         'data[jsonParams][template_data][cat_id][0]': 2,
@@ -89,5 +119,6 @@ def sendAllCategoryDetailEmail(detail_data, interval):
         sendDetailEmail([category], interval)
 
 
-# sendAllCategoryDetailEmail(category_list, '3d')
-sendListEmail(list_data)
+# sendAllCategoryDetailEmail(detail_category_list, '1h')
+# sendListEmail(list_data)'
+sendHomeEmail(11)

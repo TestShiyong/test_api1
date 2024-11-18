@@ -48,6 +48,15 @@ class Database:
         self.cur.close()
         self.connect.close()
 
+az_db = Database(
+    user='azazie',
+    password='azazie',
+    host='az-test-db.gaoyaya.com',
+    port=3306,
+    database='azazie'
+
+)
+
 
 if __name__ == '__main__':
     az_db = Database(
@@ -58,6 +67,9 @@ if __name__ == '__main__':
         database='azazie'
 
     )
+    # sql = "UPDATE email_extension_by_type set ext_value = 'Bridesmaid Dresses' WHERE email = 'test_shiyong1118@gaoyaya.com' "
+    #
+    # az_db.updateDate(sql)
 
 #
 # bi = Database(
