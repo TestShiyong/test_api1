@@ -1,4 +1,4 @@
-bd_list = [
+detail_bd_list = [
     {
         "goods_id": "1052846",
         "cat_id": "7"
@@ -24,7 +24,7 @@ bd_list = [
         "cat_id": "7"
     }
 ]
-category_list = [
+detail_category_list = [
     {
         "goods_id": "1052845",
         "cat_id": "7"
@@ -46,3 +46,5 @@ category_list = [
         "cat_id": "3102"
     }
 ]
+
+list_data = [[3110, 10, 3102], 2, 7, 8, 3110, 10, 3102, [2, 7, 8]]
