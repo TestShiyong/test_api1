@@ -1,20 +1,34 @@
+import time
+
 import requests
 from abandonDate import detail_category_list
 from abandonDate import list_data
 from common.handleDatabase import az_db
 
-email = 'lapuda@gaoyaya.com'
-# email = 'shiyong@gaoyaya.com'
+# email = 'lapuda@gaoyaya.com'
+# email = 'mario.wang@gaoyaya.com'
+
+
+email = 'azfolder4test@gaoyaya.com'
+# email = 'white.zhang@gaoyaya.com'
+# email ='test_shiyong11181740@gaoyaya.com'
+# au
+# email = 'test_shiyong11191035@gaoyaya.com'
+# gb
+# email = 'test_shiyong11191036@gaoyaya.com'
 
 
 def sendHomeEmail(home_data):
     category = ['Bridesmaid Dresses', 'Wedding Dresses', 'Mother Of The Bride Dresses', 'Flower Girl Dresses',
                 'Formal & Evening', 'Accessories', 'Bridesmaid Dresses,Wedding Dresses,Mother Of The Bride Dresses',
                 'Flower Girl Dresses,Formal & Evening,Accessories']
+
+    # category = ['Wedding Dresses','Flower Girl Dresses,Formal & Evening,Accessories']
     for item in category:
-        sql = f"UPDATE email_extension_by_type set ext_value = '{item}' WHERE email = '{email}' "
+        sql = f"UPDATE email_extension_by_type set ext_value = '{item}' WHERE email = '{email}'"
         az_db.updateDate(sql)
-        print(f'开始发送 home 邮件:', list_data)
+        # time.sleep(2)
+        print(f'开始发送 home 邮件:', home_data)
         url = 'https://cms-t-4.azazie.com/index.php'
         datas = {
             'method': 'POST',
@@ -62,8 +76,8 @@ def sendListEmail(list_data):
         'Authorization': 'Bearer FbVKVHJYbZ5QZMeKd9CoRx8Z7eywGx84'
     }
 
-    number = 0
     for cat_id in list_data:
+        number = 0
         if type(cat_id) == list:
             for item in cat_id:
                 datas[f'data[jsonParams][template_data][cat_id][{number}]'] = item
@@ -119,8 +133,13 @@ def sendAllCategoryDetailEmail(detail_data, interval):
     for category in detail_data:
         sendDetailEmail([category], interval)
 
+
 if __name__ == '__main__':
-    pass
-    # sendAllCategoryDetailEmail(detail_category_list, '1h')
-    # sendListEmail(list_data)
-    # sendHomeEmail('test')
+    # pass
+    sendHomeEmail('test')
+    sendListEmail(list_data)
+    sendAllCategoryDetailEmail(detail_category_list, '1h')
+    sendAllCategoryDetailEmail(detail_category_list, '1d')
+    sendAllCategoryDetailEmail(detail_category_list, '3d')
+
+
