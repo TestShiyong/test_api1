@@ -1,5 +1,5 @@
 import requests
-
+import re
 def erpLogin():
     header = {
         "Cache-Control": "no-cache",
@@ -27,11 +27,12 @@ def getErpOrderDetail(token):
 
     }
     res = requests.get(url=url,headers=headers)
-    text = res.text
+    text = str(res.text)
     new_text = text.replace(' ','')
-    # print(new_text)
-    text_index = new_text.find('az_sn')
-    print(new_text[text_index-50:text_index+200])
+    print(new_text)
+    pattern = 'SF\d+'
+    matches = re.finditer(pattern, new_text)
+    print(matches)
 
 
 token = erpLogin()

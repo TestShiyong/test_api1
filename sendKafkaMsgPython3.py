@@ -4,14 +4,18 @@
 
 from confluent_kafka import Producer
 import json
+email = 'lapuda@gaoyaya.com'
+
+home_data = {"airship_id": "979a2cef-6155-48fa-ae46-12416c512352", "client_id": "C587152A-47CC-4451-B797-0FA39252AD94",
+             "country_code": "US", "email": email, "from_page": "home", "interval": "1d"}
 
 bounce_data = {
     "client_id": "C587152A-47CC-4451-B797-0FA39252AD94",
     "airship_id": "979a2cef-6155-48fa-ae46-12416c512352",
     "country_code": "CA",
-    "email": "shiyong@gaoyaya.com",
-    "from_page": "detail",
-    "interval": "1h",
+    "email": email,
+    "from_page": "home",
+    "interval": "1d",
     "goods_info": [
         {
             "goods_id": 1064100,
@@ -26,8 +30,8 @@ bounce_data = {
 
 list_bounce_data = {"airship_id": "979a2cef-6155-48fa-ae46-12416c512352",
                     "client_id": "C587152A-47CC-4451-B797-0FA39252AD94", "country_code": "CA",
-                    "email": "shiyong@gaoyaya.com", "from_page": "goods", "cat_id": [8],
-                    "interval": "1d"}
+                    "email": email, "from_page": "goods", "cat_id": [8],
+                    "interval": "3d"}
 
 
 def send_kafka_msg(bounce_data):
@@ -60,5 +64,5 @@ def delivery_report(err, msg):
 
 
 if __name__ == "__main__":
-    send_kafka_msg(bounce_data)
+    send_kafka_msg(home_data)
 # @cursor end

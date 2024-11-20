@@ -2,14 +2,26 @@ import time
 
 import requests
 from abandonDate import detail_category_list
-from abandonDate import list_data
+from abandonDate import detail_case1, detail_case2, detail_case3
+# ,list_data
 from common.handleDatabase import az_db
 
-# email = 'lapuda@gaoyaya.com'
+email_list = [
+    'lapuda@gaoyaya.com',
+    # 'julie.z@azazie.com',
+    # 'mario.wang@gaoyaya.com',
+    # 'azfolder4test@gaoyaya.com'
+    # 'shiyong@gaoyaya.com'
+]
+
+
+# email = 'shiyong@gaoyaya.com'
+
+
 # email = 'mario.wang@gaoyaya.com'
 
 
-email = 'azfolder4test@gaoyaya.com'
+# email = 'azfolder4test@gaoyaya.com'
 # email = 'white.zhang@gaoyaya.com'
 # email ='test_shiyong11181740@gaoyaya.com'
 # au
@@ -18,7 +30,7 @@ email = 'azfolder4test@gaoyaya.com'
 # email = 'test_shiyong11191036@gaoyaya.com'
 
 
-def sendHomeEmail(home_data):
+def sendHomeEmail(home_data, email):
     category = ['Bridesmaid Dresses', 'Wedding Dresses', 'Mother Of The Bride Dresses', 'Flower Girl Dresses',
                 'Formal & Evening', 'Accessories', 'Bridesmaid Dresses,Wedding Dresses,Mother Of The Bride Dresses',
                 'Flower Girl Dresses,Formal & Evening,Accessories']
@@ -52,7 +64,7 @@ def sendHomeEmail(home_data):
         print(res.json())
 
 
-def sendListEmail(list_data):
+def sendListEmail(list_data, email):
     print(f'开始发送 list 邮件:', list_data)
     url = 'https://cms-t-4.azazie.com/index.php'
     datas = {
@@ -90,7 +102,7 @@ def sendListEmail(list_data):
         print(res.json())
 
 
-def sendDetailEmail(detail_data, interval):
+def sendDetailEmail(detail_data, interval, email):
     print(f'开始发送detail {interval} 邮件:', detail_data)
     url = 'https://cms-t-4.azazie.com/index.php'
     datas = {
@@ -126,20 +138,31 @@ def sendDetailEmail(detail_data, interval):
         'Authorization': 'Bearer FbVKVHJYbZ5QZMeKd9CoRx8Z7eywGx84'
     }
     res = requests.post(url, datas, params=params)
+    print(res.status_code)
     print('detail邮件发送成功', res.json())
 
 
-def sendAllCategoryDetailEmail(detail_data, interval):
+def sendAllCategoryDetailEmail(detail_data, interval, email):
     for category in detail_data:
-        sendDetailEmail([category], interval)
+        sendDetailEmail([category], interval, email)
 
 
 if __name__ == '__main__':
-    # pass
-    sendHomeEmail('test')
-    sendListEmail(list_data)
-    sendAllCategoryDetailEmail(detail_category_list, '1h')
-    sendAllCategoryDetailEmail(detail_category_list, '1d')
-    sendAllCategoryDetailEmail(detail_category_list, '3d')
+    for email in email_list:
+        # pass
+        # sendHomeEmail('test')
+        # sendListEmail(list_data)
+        # sendAllCategoryDetailEmail(detail_category_list, '1h')
+        # sendAllCategoryDetailEmail(detail_category_list, '1d')
+        # sendAllCategoryDetailEmail(detail_category_list, '3d')
+        sendDetailEmail(detail_case1, '1h', email)
+        sendDetailEmail(detail_case2, '1h', email)
+        sendDetailEmail(detail_case3, '1h', email)
 
+        sendDetailEmail(detail_case1, '1d', email)
+        sendDetailEmail(detail_case2, '1d', email)
+        sendDetailEmail(detail_case3, '1d', email)
 
+        sendDetailEmail(detail_case1, '3d', email)
+        sendDetailEmail(detail_case2, '3d', email)
+        sendDetailEmail(detail_case3, '3d', email)
