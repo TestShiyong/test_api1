@@ -1,9 +1,9 @@
 import time
 from threading import Thread
-from common.handle_request import sendRequest
+from common.handleRequest import sendRequest
 from common.handleConfig import cf
 from common.handleLog import log
-from common.handle_csv import waite_data_cav
+from common.handleCsv import waite_data_cav
 import random
 import myPath
 import os

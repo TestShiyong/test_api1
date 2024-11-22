@@ -9,7 +9,7 @@ from common.handleExcel import Excel_data
 from common.handleData import extract, replaceAllData
 from common.handleLog import new_log
 from common.handleNewEmail import newEmai
-from common.handle_request import sendRequest
+from common.handleRequest import sendRequest
 import path
 
 # 创建ddt对象

@@ -1,7 +1,7 @@
 parameters.pyfrom common.dress_type import all_dress_type
-from common.handle_request import send_request
+from common.handleRequest import send_request
 from common.handle_conf_file import cf
-from common.handle_csv import waite_data_cav
+from common.handleCsv import waite_data_cav
 import mypath
 import os
 import queue

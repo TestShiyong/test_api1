@@ -2,7 +2,7 @@ from common.handleData import GlobalData
 import myPath
 import csv
 import random
-from common.handle_request import sendRequest
+from common.handleRequest import sendRequest
 from common.handleConfig import ConfigReader
 from common.handleData import replaceAllData
 from jsonpath import jsonpath

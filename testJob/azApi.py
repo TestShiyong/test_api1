@@ -1,6 +1,3 @@
-import requests
-import time
-
 BASE_URL = 'https://api-t-2.azazie.com'
 
 # BASE_URL = 'https://apix.azazie.com'

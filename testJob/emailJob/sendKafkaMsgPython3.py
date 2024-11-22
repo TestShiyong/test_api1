@@ -1,7 +1,9 @@
 # @cursor start
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+"""
+推送 首页 类别页 详情页 崩失脚本 推送后立即发送邮件
+"""
 from confluent_kafka import Producer
 import json
 email = 'lapuda@gaoyaya.com'
