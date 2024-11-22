@@ -29,10 +29,11 @@ def getErpOrderDetail(token):
     res = requests.get(url=url,headers=headers)
     text = str(res.text)
     new_text = text.replace(' ','')
-    print(new_text)
+    # print(new_text)
     pattern = 'SF\d+'
     matches = re.finditer(pattern, new_text)
-    print(matches)
+    for match in matches:
+        print(match.group())
 
 
 token = erpLogin()
