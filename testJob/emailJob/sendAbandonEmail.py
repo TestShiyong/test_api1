@@ -1,24 +1,28 @@
 import time
 
 import requests
-from abandonDate import detail_category_list, list_data
-from abandonDate import detail_case1, detail_case2, detail_case3
+from abandonDate import list_data
+from abandonDate import detail_case1, detail_case2, detail_case3,detail_category_list
 # ,list_data
 from common.handleDatabase import az_db
 
 email_list = [
-    'lapuda@gaoyaya.com',
+    # 'test_shiyong1123114041@gaoyaya.com',
+    # 'lapuda@gaoyaya.com',
     # 'julie.z@azazie.com',
     # 'mario.wang@gaoyaya.com',
     # 'azfolder4test@gaoyaya.com'
-    # 'shiyong@gaoyaya.com'
+    'shiyong@gaoyaya.com'
 ]
 
 
 def sendHomeEmail(home_data, email):
-    category = ['Bridesmaid Dresses', 'Wedding Dresses', 'Mother Of The Bride Dresses', 'Flower Girl Dresses',
-                'Formal & Evening', 'Accessories', 'Bridesmaid Dresses,Wedding Dresses,Mother Of The Bride Dresses',
-                'Flower Girl Dresses,Formal & Evening,Accessories']
+    category = [
+        'Bridesmaid Dresses',
+        'Wedding Dresses',
+        'Mother Of The Bride Dresses', 'Flower Girl Dresses',
+        'Formal & Evening', 'Accessories', 'Bridesmaid Dresses,Wedding Dresses,Mother Of The Bride Dresses',
+        'Flower Girl Dresses,Formal & Evening,Accessories']
     for item in category:
         sql = f"UPDATE email_extension_by_type set ext_value = '{item}' WHERE email = '{email}'"
         az_db.updateDate(sql)
@@ -116,7 +120,6 @@ def sendDetailEmail(detail_data, interval, email):
         'q': 'admin/main/mailMock/proxy',
         'Authorization': 'Bearer FbVKVHJYbZ5QZMeKd9CoRx8Z7eywGx84'
     }
-    print(datas)
     res = requests.post(url, datas, params=params)
     print(res.status_code)
     print('detail邮件发送成功', res.json())
@@ -143,11 +146,10 @@ def sendCaseEmail(email):
 
 if __name__ == '__main__':
     for email in email_list:
-        # sendCaseEmail(email)
-        pass
+        sendCaseEmail(email)
+
+        # sendHomeEmail('test', email)
+        # sendListEmail(list_data, email)
         # sendAllCategoryDetailEmail(detail_category_list, '1h', email)
         # sendAllCategoryDetailEmail(detail_category_list, '1d', email)
         # sendAllCategoryDetailEmail(detail_category_list, '3d', email)
-
-        # sendHomeEmail('test',email)
-        # sendListEmail(list_data,email)

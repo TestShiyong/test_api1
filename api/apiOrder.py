@@ -1,15 +1,20 @@
 import requests
 import time
-BASE_URL = 'https://api-t-2.azazie.com'
+
+BASE_URL = 'https://api-t-1.azazie.com'
 
 # BASE_URL = 'https://apix.azazie.com'
 test_order_data_list = []
+category_list = ['page_common_new_user_category_bd', 'page_common_new_user_category_wd',
+                 'page_common_new_user_category_mom', 'page_common_new_user_category_fgd',
+                 'page_common_new_user_category_sod', 'page_common_new_user_category_acc']
 
 
-def register(email=None):
+def register(category=None, email=None):
     timestamp = int(time.time())
     date = time.strftime('%m%d%H%M%S', time.localtime(timestamp))
     url = f'{BASE_URL}/1.0/user/register'
+
     headers = {
         'x-app': 'pc',
         'x-countrycode': 'US',
@@ -18,7 +23,6 @@ def register(email=None):
         'x-project': 'azazie',
 
     }
-
     if not email:
         email = f'test_shiyong{date}@gaoyaya.com'
     data = {
@@ -28,9 +32,15 @@ def register(email=None):
         'is_check_email_suffix': '1',
         'categories[0]': 'page_common_new_user_category_bd'
     }
+    if category:
+        number = 0
+        for item in category:
+            data[f'categories[{number}]'] = item
+            number += 1
+
     response = requests.post(url, headers=headers, data=data)
     email = response.json()['data']['email']
-    print('register()', email)
+    print('register()\n', email)
     global test_order_data_list
     test_order_data_list.append(email)
     return response.json()['data']['token']
@@ -53,7 +63,7 @@ def login(email, password):
     result = requests.post(url=url, json=data, headers=headers)
     res = result.json()
     login_token = result.json()['data']['token']
-    print(result.json())
+    # print(result.json())
     return login_token
 
 
@@ -172,7 +182,7 @@ def createOrder(token, address_id):
         "year": "2027",
         "card_code": "116",
         "version": "a",
-        "robot_validation":1
+        "robot_validation": 1
     }
     print(f'createOrder data: {data}')
     response = requests.post(url, headers=headers, json=data)
@@ -210,12 +220,23 @@ def payment(order_sn, token):
     print('payment', response.json())
 
 
-if __name__ == '__main__':
-    # token = register()
-    token = login('shiyong@gaoyaya.com', '123456')
-    print(token)
+def orderPyment():
+    token = register()
+    # token = login('shiyong@gaoyaya.com', '123456')
     address_id = getAddress(token)
-    # addToCart(token, goods_number=1)
+    addToCart(token, goods_number=1)
     order_sn = createOrder(token, address_id)
     payment(order_sn, token)
+
+
+def createEmail():
+    timestamp = int(time.time())
+    date = time.strftime('%m%d%H%M%S', time.localtime(timestamp))
+    email = f'test_shiyong{date}@gaoyaya.com'
+    print(email)
+
+
+if __name__ == '__main__':
+    # register(category_list)
+    createEmail()
     pass
