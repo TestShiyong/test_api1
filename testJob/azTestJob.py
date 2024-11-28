@@ -4,15 +4,17 @@ from common.handleDatabase import Database
 from datetime import datetime, timezone, timedelta
 import time
 
+# BASE_ULR = 'https://api-t-7.azazie.com'
+BASE_ULR = 'https://apix.azazie.com'
 
-def loginAZ(is_pro=None):
-    url = 'https://api-t-1.azazie.com/1.0/user/login'
-    if is_pro:
-        url = 'https://apix.azazie.com/1.0/user/login'
+
+def loginAZ():
+    url = BASE_ULR+'/1.0/user/login'
+
     headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": "",
                "x-project": "azazie", "x-countryCode": 'us'}
     payload = {
-        'email': 'shiyong@gaoyaya.com', 'password': 123456
+        'email': 'test_shiyong1128@gaoyaya.com', 'password': 123456
     }
     try:
         result = requests.post(url, json=payload, headers=headers)
@@ -25,7 +27,7 @@ def loginAZ(is_pro=None):
 def getRecId(token):
     headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": token,
                "x-project": "azazie", "x-countryCode": 'us'}
-    url = 'https://apix.azazie.com/1.0/cart'
+    url = BASE_ULR+'/1.0/cart'
     res = requests.get(url, headers=headers)
     checkout_goods_list = res.json()['data']['checkoutGoodsList']
     rec_id_list = []
@@ -40,9 +42,7 @@ def deleteCard(rec_id_list, token, is_pro=None):
     headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": token,
                "x-project": "azazie", "x-countryCode": 'us'}
     for rec_id in rec_id_list:
-        url = f'https://api-t-7.azazie.com/1.0/cart/goods/{rec_id}'
-        if is_pro:
-            url = f'https://apix.azazie.com/1.0/cart/goods/{rec_id}'
+        url = BASE_ULR+f'/1.0/cart/goods/{rec_id}'
         res = requests.delete(url, headers=headers)
         print('deleteCard:', res.status_code)
 
@@ -84,6 +84,7 @@ def detail_page_colors(goods_id):
         return len(li)
     except Exception:
         print(f'数据异常 id:{goods_id}')
+    print('detail color :',li)
 
 
 def group_goods(url, page_numbers, datas):
@@ -233,6 +234,8 @@ if __name__ == '__main__':
 
     # format_email()
 
-    token = loginAZ(is_pro=True)
+    token = loginAZ()
     rec_id_list = getRecId(token)
     deleteCard(rec_id_list, token, True)
+
+    # detail_page_colors(1066990)

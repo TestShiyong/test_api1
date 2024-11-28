@@ -1,9 +1,9 @@
 import requests
 import time
 
-BASE_URL = 'https://api-t-1.azazie.com'
+# BASE_URL = 'https://api-t-1.azazie.com'
 
-# BASE_URL = 'https://apix.azazie.com'
+BASE_URL = 'https://apix.azazie.com'
 test_order_data_list = []
 category_list = ['page_common_new_user_category_bd', 'page_common_new_user_category_wd',
                  'page_common_new_user_category_mom', 'page_common_new_user_category_fgd',

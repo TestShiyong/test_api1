@@ -103,7 +103,8 @@ def replace_data(replace_str):
 if __name__ == '__main__':
     path = r"C:\Users\15572\Desktop\test\test_api\prime_data\all_bridesmaid_dresses.csv"
 
-    goods_list = read_csv(path)
-    goods_info = random.choice(goods_list)
-    print(goods_info)
+    # goods_list = read_csv(path)
+    # goods_info = random.choice(goods_list)
+    # print(goods_info)
+    getColorAndSize(1066990)
     pass
