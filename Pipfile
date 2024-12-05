@@ -4,18 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pytest = "*"
 jsonpath = "*"
 pymysql = "*"
 openpyxl = "*"
 path = "*"
 requests = "*"
-pytest = "*"
 ddt = "*"
-paramiko = "*"
-bs4 = "*"
-google = "*"
-
 [dev-packages]
 
 [requires]
-python_version = "3.10"
+python_version = "3.7"
