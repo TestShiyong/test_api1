@@ -1,5 +1,5 @@
 import requests
-from api.apiOrder import login
+from api.azApi import login
 import random
 
 # BASE_URL = 'https://api-t-1.azazie.com'

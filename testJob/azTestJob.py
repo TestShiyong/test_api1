@@ -9,7 +9,7 @@ BASE_ULR = 'https://apix.azazie.com'
 
 
 def loginAZ():
-    url = BASE_ULR+'/1.0/user/login'
+    url = BASE_ULR + '/1.0/user/login'
 
     headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": "",
                "x-project": "azazie", "x-countryCode": 'us'}
@@ -27,7 +27,7 @@ def loginAZ():
 def getRecId(token):
     headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": token,
                "x-project": "azazie", "x-countryCode": 'us'}
-    url = BASE_ULR+'/1.0/cart'
+    url = BASE_ULR + '/1.0/cart'
     res = requests.get(url, headers=headers)
     checkout_goods_list = res.json()['data']['checkoutGoodsList']
     rec_id_list = []
@@ -42,7 +42,7 @@ def deleteCard(rec_id_list, token, is_pro=None):
     headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": token,
                "x-project": "azazie", "x-countryCode": 'us'}
     for rec_id in rec_id_list:
-        url = BASE_ULR+f'/1.0/cart/goods/{rec_id}'
+        url = BASE_ULR + f'/1.0/cart/goods/{rec_id}'
         res = requests.delete(url, headers=headers)
         print('deleteCard:', res.status_code)
 
@@ -84,7 +84,7 @@ def detail_page_colors(goods_id):
         return len(li)
     except Exception:
         print(f'数据异常 id:{goods_id}')
-    print('detail color :',li)
+    print('detail color :', li)
 
 
 def group_goods(url, page_numbers, datas):
