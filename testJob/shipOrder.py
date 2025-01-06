@@ -2,8 +2,10 @@ import requests
 import paramiko
 import os
 import myPath
-from bs4 import BeautifulSoup
 import re
+
+
+# from api.azApi import new_api
 
 
 def sendOrderErp(goods_list):
@@ -198,7 +200,7 @@ def createShippingTask(token):
             'submit': '1',
             'taobao_order_sns': order_sn,
             'node': 'SHIPPING',
-            'dispatch_assign_provider': '837',
+            'dispatch_assign_provider': '817',
             'container_id': '1884055',
             'location_seq_id': 'zxg12'
 
@@ -323,13 +325,13 @@ def deliveryOrder(token):
 
 if __name__ == '__main__':
     # orders = []
-    orders = ['ZZ3019342312']
+    orders = ['ZZ1195893425']
     sendOrderErp(orders)
     token = erpLogin()
-    # erp_items_list = getErpOrderItems(token)
-    # erpConfirmOrder(erp_items_list, token)
-    # createShippingTask(token)
-    # shipOrder(token)
-    # # deliveryOrder(token)
-    # syncOrderToAZ()
-    getErpOrderItems2(token)
+    erp_items_list = getErpOrderItems(token)
+    erpConfirmOrder(erp_items_list, token)
+    createShippingTask(token)
+    shipOrder(token)
+    # deliveryOrder(token)
+    syncOrderToAZ()
+    # getErpOrderItems2(token)

@@ -4,8 +4,10 @@ from common.handleDatabase import Database
 from datetime import datetime, timezone, timedelta
 import time
 
-# BASE_ULR = 'https://api-t-7.azazie.com'
-BASE_ULR = 'https://apix.azazie.com'
+BASE_ULR = 'https://api-t-7.azazie.com'
+
+
+# BASE_ULR = 'https://apix.azazie.com'
 
 
 def loginAZ():
@@ -14,7 +16,7 @@ def loginAZ():
     headers = {"Content-Type": "application/json", "x-app": 'pc', "x-token": "",
                "x-project": "azazie", "x-countryCode": 'us'}
     payload = {
-        'email': 'test_shiyong1128@gaoyaya.com', 'password': 123456
+        'email': 'shiyong@gaoyaya.com', 'password': 123456
     }
     try:
         result = requests.post(url, json=payload, headers=headers)
@@ -224,6 +226,120 @@ def format_email():
     email = f'test_shiyong{date}@gaoyaya.com'
     print(email)
     return email
+
+
+def legoLogin():
+    url = 'https://api-t-1-lego.azazie.com/auth/login'
+    datas = {"username": "admin", "password": "lb123456"}
+    res = requests.post(url, json=datas)
+    token = res.json()['data']['token']
+    return token
+
+
+def azOnlineDatabase(sql, token):
+    """
+    从AZ数据库获取数据处理。
+    """
+    header = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "Host": "audit-az.gaoyaya.com",
+        "Origin": "https://audit-az.gaoyaya.com",
+        "Referer": "https://audit-az.gaoyaya.com/",
+        "authorization": token
+    }
+    datas = {
+        # "sql": "select * from goods_display_order_brother where effective_cat_id = 7 order by sales_order_28_days DESC ",
+        "sql": sql,
+        "basename": "azazie",
+        "source": "azdbslave"
+    }
+    url = 'https://audit-az.gaoyaya.com/api/v2/query'
+    res = requests.post(url, headers=header, json=datas)
+    # 处理返回的数据...
+    return res.json()
+
+
+def removeDuplicates(lst):
+    """
+    从列表中移除重复项。
+
+    参数：
+        lst: 要处理的列表。
+
+    返回：
+        移除重复项后的列表。
+    """
+    return list(set(lst))
+
+
+def getProductColors(goods_id):
+    """
+    调用first-screen获取商品的颜色信息。
+
+    参数：
+        goods_id: 商品ID。
+
+    返回：
+        包含颜色数量和商品名称的元组。
+    """
+    header = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "x-app": "pc",
+        "x-token": "",
+        "x-project": "azazie",
+        "x-countryCode": "US",
+        "authorization": "Basic bGViYmF5OnBhc3N3MHJk"
+    }
+    url = f'https://apix-p6.azazie.com/1.0/product/first-screen?goods_id={goods_id}'
+    try:
+        res = requests.get(url, headers=header)
+        colors = res.json()['data']['styleInfo']['color']
+        goods_name = res.json()['data']['baseInfo']['goodsName'].replace("Flower Girl Dress", "").strip()
+        color_count = len(colors)
+        return color_count, goods_name
+    except Exception as e:
+        print(f'数据异常 id:{goods_id}')
+
+
+def get_goods_list(url, page_range, data):
+    """
+    从列表页接口返回数据中获取商品列表，并移除重复项。
+
+    参数：
+        url: 列表页接口URL。
+        page_range: 页码范围。
+        data: POST请求的数据。
+
+    返回：
+        商品列表。
+    """
+    header = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "x-app": "pc",
+        "x-token": "",
+        "x-project": "azazie",
+        "x-countryCode": "US",
+        "authorization": "Basic bGViYmF5OnBhc3N3MHJk",
+        "cache-action": "flush"
+    }
+    goods_list = []
+    for number in range(*page_range):
+        url_with_page = url.replace("page=1", f"page={number}")
+        res = requests.post(url_with_page, json=data, headers=header)
+        dict1 = res.json()['data']['prodList']
+        for item in dict1:
+            goods_list.append(item['goodsId'])
+    unique_goods_list = removeDuplicates(goods_list)
+    print(f"Total number of goods: {len(unique_goods_list)}")
+    for item_id in unique_goods_list:
+        count_color_number = getProductColors(item_id)
+        print(
+            f"Item ID: {item_id}, Count_goods: {goods_list.count(item_id)}, Count_color_number: {count_color_number[0]} - {count_color_number[1]}")
+    return unique_goods_list
 
 
 if __name__ == '__main__':

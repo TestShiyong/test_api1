@@ -217,9 +217,9 @@ class API:
 
     def orderPyment(self):
         token = self.register()
-        # token =  self.login('shiyong@gaoyaya.com', '123456')
+        token =  self.login('test_shiyongx2@gaoyaya.com', '123456')
         address_id = self.getAddress(token)
-        self.addToCart(token, goods_number=1)
+        # self.addToCart(token, goods_number=1)
         order_sn = self.createOrder(token, address_id)
         self.payment(order_sn, token)
 

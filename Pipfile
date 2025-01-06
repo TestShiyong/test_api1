@@ -11,6 +11,8 @@ openpyxl = "*"
 path = "*"
 requests = "*"
 ddt = "*"
+paramiko = "*"
+
 [dev-packages]
 
 [requires]
