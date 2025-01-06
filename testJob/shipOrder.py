@@ -325,7 +325,7 @@ def deliveryOrder(token):
 
 if __name__ == '__main__':
     # orders = []
-    orders = ['ZZ1195893425']
+    orders = ['ZZ9742414538']
     sendOrderErp(orders)
     token = erpLogin()
     erp_items_list = getErpOrderItems(token)
