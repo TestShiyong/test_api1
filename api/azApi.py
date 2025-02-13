@@ -184,7 +184,6 @@ class API:
         }
         print(f'createOrder data: {data}')
         response = requests.post(url, headers=headers, json=data)
-        print('createOrder()', response.json())
         order_sn = response.json()['data']['orderSn']
         # test_order_data_list.append(order_sn)
 
@@ -219,7 +218,7 @@ class API:
         token = self.register()
         token = self.login('shiyong@gaoyaya.com', '123456')
         address_id = self.getAddress(token)
-        self.addToCart(token, goods_number=1)
+        # self.addToCart(token, goods_number=1)
         order_sn = self.createOrder(token, address_id)
         self.payment(order_sn, token)
 

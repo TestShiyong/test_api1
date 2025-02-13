@@ -3,11 +3,12 @@ from common.handleDatabase import Database
 
 from datetime import datetime, timezone, timedelta
 import time
+from common.handleDatabase import az_db
 
-BASE_ULR = 'https://api-t-7.azazie.com'
+# BASE_ULR = 'https://api-t-7.azazie.com'
 
 
-# BASE_ULR = 'https://apix.azazie.com'
+BASE_ULR = 'https://apix.azazie.com'
 
 
 def loginAZ():
@@ -200,26 +201,6 @@ def updateCouponEndTime(email, coupon_code, end_time):
     return coupon_end_time
 
 
-def remaining_time_until_given_timestamp(timestamp, coupon_code):
-    # 获取当前洛杉矶时间
-    la_timezone = timezone(timedelta(hours=-7))  # 洛杉矶夏令时时区 UTC-7
-    current_time_utc = datetime.now(timezone.utc)  # 当前UTC时间
-    current_time_la = current_time_utc.astimezone(la_timezone)
-
-    # 将时间戳转换为 datetime 对象（带有时区信息）
-    given_time = datetime.utcfromtimestamp(timestamp).replace(tzinfo=timezone.utc)
-
-    # 计算剩余时间
-    remaining_time = given_time - current_time_utc
-
-    remaining_days = remaining_time.days
-    remaining_hours, remainder_seconds = divmod(remaining_time.seconds, 3600)
-
-    print(f"coupon code: {coupon_code} 失效时间剩余 {remaining_days} 天 {remaining_hours} 小时")
-
-    return remaining_days, remaining_hours
-
-
 def format_email():
     timestamp = int(time.time())
     date = time.strftime('%m%d%H%M%S', time.localtime(timestamp))
@@ -327,31 +308,95 @@ def get_goods_list(url, page_range, data):
         "cache-action": "flush"
     }
     goods_list = []
-    for number in range(*page_range):
+    count_goods_list = {}
+    for number in range(1, page_range):
         url_with_page = url.replace("page=1", f"page={number}")
         res = requests.post(url_with_page, json=data, headers=header)
         dict1 = res.json()['data']['prodList']
         for item in dict1:
             goods_list.append(item['goodsId'])
+
     unique_goods_list = removeDuplicates(goods_list)
-    print(f"Total number of goods: {len(unique_goods_list)}")
-    for item_id in unique_goods_list:
-        count_color_number = getProductColors(item_id)
-        print(
-            f"Item ID: {item_id}, Count_goods: {goods_list.count(item_id)}, Count_color_number: {count_color_number[0]} - {count_color_number[1]}")
+    for goods in goods_list:
+        count_goods_number = goods_list.count(goods)
+        count_goods_list[goods] = count_goods_number
+    print(unique_goods_list)
+    print('unique_goods_list数量:', len(unique_goods_list))
+    print(goods_list)
+    print('goods_list数量',len(goods_list))
+    print(count_goods_list)
+    # # print(f"Total number of goods: {len(unique_goods_list)}")
+    # for item_id in unique_goods_list:
+    #     count_color_number = getProductColors(item_id)
+    #     print(
+    #         f"Item ID: {item_id}, Count_goods: {goods_list.count(item_id)}, Count_color_number: {count_color_number[0]} - {count_color_number[1]}")
+
+
+
+
+
+    """
+        url2 ="https://p.azazie.com/pre/1.0/list/content-new?format=list&cat_name=atelier-gala-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=a&galleryVersion=A&sodGalleryVersion=B&topic=azazie&listColorVersion=A&multiColorVersion=b&show_final_sale=0"
+    data = {"filters":{},"view_mode":["petite"],"originUrl":"/all/atelier-gala-dresses?sort_by=popularity&page=1"}
+    url="https://www.azazie.com/prod/1.0/list/content-new?format=list&cat_name=atelier-gala-dresses&dress_type=dress&page=1&limit=60&in_stock=&sort_by=popularity&is_outlet=0&version=b&activityVerison=a&galleryVersion=A&sodGalleryVersion=B&topic=azazie&listColorVersion=A&multiColorVersion=b&show_final_sale=0"
+    goods_list = get_goods_list(url, 8, data)
+    print(goods_list)
+    """
+
+
     return unique_goods_list
+
+def getColorId(color_name, cat_id):
+    from common.handleDatabase import az_db
+    sql = f"	SELECT * FROM `style` where value  ='Barbie™ Pink' and `name` = 'color' and cat_id ={cat_id} "
+    res = az_db.getFetchone(sql)
+    style_id = res['style_id']
+    print(f'color : ({color_name})，style_id : {style_id}')
+    return style_id
+
+
+def joinSku(cat_id, goods_id, color_id, size_id):
+    if size_id:
+        print(f'ZZc{cat_id}g{goods_id}y{color_id}s{size_id}')
+    else:
+        print(f'ZZc{cat_id}g{goods_id}c{cat_id}')
+
+
+def getSkuDetails(sku):
+    """
+    传入sku后连接数据库查询  然后输出color 与 size的name
+    :param sku:
+    :return:
+    """
+    from common.handleDatabase import az_db
+    g_index = sku.find('g')
+    y_index = sku.find('y')
+    s_index = sku.find('s')
+    goods_id = sku[g_index + 1:y_index]
+    color_id = sku[y_index + 1:s_index]
+    size_id = sku[s_index + 1:]
+
+    sql_get_size_name = f"SELECT `value` FROM `style` where style_id = {size_id} and `name` = 'Size'"
+    sql_get_color_name = f"SELECT `value` FROM `style` where style_id = {color_id} and `name` ='Color';"
+    size_name = az_db.getFetchone(sql_get_size_name)['value']
+    color_name = az_db.getFetchone(sql_get_color_name)['value']
+    print(
+        f'goods_id({goods_id}),\ncolor_id({color_id}),\nsize_id({size_id}),\ncolor_name({color_name}),\nsize_name({size_name})')
 
 
 if __name__ == '__main__':
-    # 调用函数并传入时间戳和优惠券代码
-    # given_timestamp = 1725415199  # 替换为你的时间戳
-    # coupon_code = "YOUR_COUPON_CODE"  # 替换为你的优惠券代码
-    # remaining_time_until_given_timestamp(given_timestamp, coupon_code)
-
     # format_email()
+    #
+    # token = loginAZ()
+    # rec_id_list = getRecId(token)
+    # deleteCard(rec_id_list, token, True)
+    #
+    # # detail_page_colors(1066990)
+    #
+    # # getColorId('Barbie™ Pink',7)
+    # sku = 'ZZc7g1004430y196s7493'
+    # getSkuDetails(sku)
+    joinSku(7, 1051103, 7754, 7491)
+    # sql =''
+    # az_db.getFetchall()
 
-    token = loginAZ()
-    rec_id_list = getRecId(token)
-    deleteCard(rec_id_list, token, True)
-
-    # detail_page_colors(1066990)

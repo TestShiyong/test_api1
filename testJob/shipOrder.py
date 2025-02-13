@@ -325,13 +325,15 @@ def deliveryOrder(token):
 
 if __name__ == '__main__':
     # orders = []
-    orders = ['ZZ9742414538']
+    orders = ['ZZ7517664489']
     sendOrderErp(orders)
     token = erpLogin()
-    erp_items_list = getErpOrderItems(token)
-    erpConfirmOrder(erp_items_list, token)
-    createShippingTask(token)
-    shipOrder(token)
+    # erp_items_list = getErpOrderItems(token)
+    # erpConfirmOrder(erp_items_list, token)
+    # createShippingTask(token)
+    # shipOrder(token)
     # deliveryOrder(token)
-    syncOrderToAZ()
+    # syncOrderToAZ()
     # getErpOrderItems2(token)
+
+
